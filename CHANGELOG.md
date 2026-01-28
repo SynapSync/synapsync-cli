@@ -7,6 +7,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-01-28
+
+### Added
+
+#### Testing Suite (Phase 2 - Week 8)
+- **Unit tests for ManifestManager** (`tests/unit/services/manifest.test.ts`)
+  - Load/save manifest
+  - Cognitive CRUD operations
+  - Reconciliation logic
+  - Provider sync state
+
+- **Unit tests for CognitiveScanner** (`tests/unit/services/scanner.test.ts`)
+  - Filesystem scanning
+  - Compare with manifest
+  - Convert to manifest format
+  - Count by type
+
+- **Unit tests for SyncEngine** (`tests/unit/services/sync.test.ts`)
+  - Type definitions
+  - SyncResult structure
+  - SyncOptions handling
+  - SyncAction operations
+
+- **Unit tests for ConfigManager** (`tests/unit/services/config.test.ts`)
+  - Load/save config
+  - Create with defaults
+  - Get/set nested values
+  - Static factory methods
+
+- **Unit tests for maintenance services** (`tests/unit/services/maintenance.test.ts`)
+  - UpdateChecker version comparison
+  - DoctorService diagnostics
+  - CleanerService cleanup
+
+### Changed
+- All 95 unit tests passing
+- Test coverage for core services
+
 ## [0.3.0] - 2026-01-28
 
 ### Added
@@ -153,7 +191,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/SynapSync/synapse-cli/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/SynapSync/synapse-cli/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/SynapSync/synapse-cli/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/SynapSync/synapse-cli/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/SynapSync/synapse-cli/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/SynapSync/synapse-cli/releases/tag/v0.1.0
