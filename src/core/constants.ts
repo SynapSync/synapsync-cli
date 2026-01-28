@@ -10,7 +10,28 @@
 export const COGNITIVE_TYPES = ['skill', 'agent', 'prompt', 'workflow', 'tool'] as const;
 export type CognitiveType = (typeof COGNITIVE_TYPES)[number];
 
-// Default file names per cognitive type
+// File extensions per cognitive type (used for detection/scanning)
+export const COGNITIVE_FILE_EXTENSIONS: Record<CognitiveType, string> = {
+  skill: '.md',
+  agent: '.md',
+  prompt: '.md',
+  workflow: '.yaml',
+  tool: '.md',
+};
+
+// Sync mode per cognitive type:
+// - 'folder': Sync entire folder (for cognitives with assets, like skills)
+// - 'file': Sync as flat file (for simple cognitives like agents)
+export const COGNITIVE_SYNC_MODE: Record<CognitiveType, 'folder' | 'file'> = {
+  skill: 'folder',   // Skills have SKILL.md + assets/ folder
+  agent: 'file',     // Agents are single .md files
+  prompt: 'file',    // Prompts are single .md files
+  workflow: 'file',  // Workflows are single .yaml files
+  tool: 'file',      // Tools are single .md files
+};
+
+// Legacy: Default file names per cognitive type (for backward compatibility)
+// New cognitives should use their original filename
 export const COGNITIVE_FILE_NAMES: Record<CognitiveType, string> = {
   skill: 'SKILL.md',
   agent: 'AGENT.md',
@@ -113,6 +134,15 @@ export const PROVIDER_PATHS: Record<SupportedProvider, Record<CognitiveType, str
 export const CLI_NAME = 'synapsync';
 export const CLI_DESCRIPTION =
   'Neural AI Orchestration Platform - Manage AI cognitives (skills, agents, prompts, tools) across providers';
+
+// ============================================
+// Registry Configuration
+// ============================================
+export const REGISTRY_BASE_URL =
+  process.env['SYNAPSYNC_REGISTRY_URL'] ??
+  'https://raw.githubusercontent.com/SynapSync/synapse-registry/main';
+export const REGISTRY_INDEX_FILE = 'registry.json';
+export const REGISTRY_MANIFEST_FILE = 'manifest.json';
 
 // ============================================
 // ANSI Escape Codes

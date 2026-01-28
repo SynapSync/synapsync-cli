@@ -15,6 +15,15 @@ import { registerInfoCommand } from './commands/info.js';
 import { registerInitCommand } from './commands/init.js';
 import { registerConfigCommand } from './commands/config.js';
 import { registerStatusCommand } from './commands/status.js';
+import { registerProvidersCommand } from './commands/providers.js';
+import { registerSearchCommand } from './commands/search.js';
+import { registerInstallCommand } from './commands/install.js';
+import { registerListCommand } from './commands/list.js';
+import { registerUninstallCommand } from './commands/uninstall.js';
+import { registerSyncCommand } from './commands/sync.js';
+import { registerUpdateCommand } from './commands/update.js';
+import { registerDoctorCommand } from './commands/doctor.js';
+import { registerCleanCommand } from './commands/clean.js';
 
 export function createCLI(): Command {
   const program = new Command();
@@ -41,6 +50,15 @@ export function createCLI(): Command {
   registerInitCommand(program);
   registerConfigCommand(program);
   registerStatusCommand(program);
+  registerProvidersCommand(program);
+  registerSearchCommand(program);
+  registerInstallCommand(program);
+  registerListCommand(program);
+  registerUninstallCommand(program);
+  registerSyncCommand(program);
+  registerUpdateCommand(program);
+  registerDoctorCommand(program);
+  registerCleanCommand(program);
 
   // TODO: Register more commands as they are implemented
   // These commands will work both via CLI (synapsync init)

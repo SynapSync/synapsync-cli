@@ -12,6 +12,15 @@ import { executeInfoCommand } from '../commands/info.js';
 import { executeInitCommand } from '../commands/init.js';
 import { executeConfigCommand } from '../commands/config.js';
 import { executeStatusCommand } from '../commands/status.js';
+import { executeProvidersCommand } from '../commands/providers.js';
+import { executeSearchCommand } from '../commands/search.js';
+import { executeInstallCommand } from '../commands/install.js';
+import { executeListCommand } from '../commands/list.js';
+import { executeUninstallCommand } from '../commands/uninstall.js';
+import { executeSyncCommand, executeSyncStatusCommand } from '../commands/sync.js';
+import { executeUpdateCommand } from '../commands/update.js';
+import { executeDoctorCommand } from '../commands/doctor.js';
+import { executeCleanCommand } from '../commands/clean.js';
 
 // Command definition with usage info
 interface CommandDef {
@@ -111,9 +120,10 @@ registerInteractiveCommand(
     const categories: Record<string, string[]> = {
       'Information': ['info', 'version'],
       'Project': ['init', 'config', 'status'],
-      'Providers': ['connect', 'disconnect', 'providers'],
+      'Providers': ['providers'],
       'Cognitives': ['search', 'install', 'list', 'uninstall', 'create'],
       'Sync': ['sync', 'push', 'pull'],
+      'Maintenance': ['update', 'doctor', 'clean'],
     };
 
     for (const [category, cmds] of Object.entries(categories)) {
@@ -225,37 +235,201 @@ registerInteractiveCommand(
 // Provider Commands
 // ============================================
 
-registerInteractiveCommand('connect', 'Connect to AI providers', (_args) => {
-  showInfo('Command not yet implemented. Coming in Phase 1 Week 3.');
-});
-
-registerInteractiveCommand('disconnect', 'Disconnect from a provider', (_args) => {
-  showInfo('Command not yet implemented. Coming in Phase 1 Week 3.');
-});
-
-registerInteractiveCommand('providers', 'List connected providers', (_args) => {
-  showInfo('Command not yet implemented. Coming in Phase 1 Week 3.');
-});
+registerInteractiveCommand(
+  'providers',
+  'Manage provider configuration',
+  (args) => {
+    executeProvidersCommand(args);
+  },
+  {
+    usage: '/providers [list|enable|disable|path] [args]',
+    options: [
+      { flag: 'list', description: 'List all providers and status (default)' },
+      { flag: 'enable <provider>', description: 'Enable a provider' },
+      { flag: 'disable <provider>', description: 'Disable a provider' },
+      { flag: 'path <provider> <path>', description: 'Set custom sync path' },
+    ],
+    examples: [
+      '/providers',
+      '/providers enable openai',
+      '/providers disable cursor',
+      '/providers path claude .claude-code/',
+    ],
+  }
+);
 
 // ============================================
 // Asset Commands (skills, agents, prompts, etc.)
 // ============================================
 
-registerInteractiveCommand('search', 'Search for assets in registry', (_args) => {
-  showInfo('Command not yet implemented. Coming in Phase 1 Week 4.');
-});
+registerInteractiveCommand(
+  'search',
+  'Search for cognitives in the registry',
+  async (args) => {
+    // Parse args to extract query and options
+    const parts = args.split(/\s+/);
+    let query: string | undefined;
+    const options: Record<string, string | boolean> = {};
 
-registerInteractiveCommand('install', 'Install an asset (skill, agent, prompt)', (_args) => {
-  showInfo('Command not yet implemented. Coming in Phase 1 Week 4.');
-});
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      if (part === undefined || part === '') continue;
 
-registerInteractiveCommand('list', 'List installed assets', (_args) => {
-  showInfo('Command not yet implemented. Coming in Phase 1 Week 4.');
-});
+      if (part === '--type' || part === '-t') {
+        options.type = parts[++i] ?? '';
+      } else if (part === '--category' || part === '-c') {
+        options.category = parts[++i] ?? '';
+      } else if (part === '--tag') {
+        options.tag = parts[++i] ?? '';
+      } else if (part === '--limit' || part === '-l') {
+        options.limit = parts[++i] ?? '20';
+      } else if (part === '--json') {
+        options.json = true;
+      } else if (!part.startsWith('-')) {
+        query = part;
+      }
+    }
 
-registerInteractiveCommand('uninstall', 'Uninstall an asset', (_args) => {
-  showInfo('Command not yet implemented. Coming in Phase 1 Week 4.');
-});
+    await executeSearchCommand(query, options);
+  },
+  {
+    usage: '/search [query] [options]',
+    options: [
+      { flag: '-t, --type <type>', description: 'Filter by type (skill, agent, prompt, etc.)' },
+      { flag: '-c, --category <cat>', description: 'Filter by category' },
+      { flag: '--tag <tag>', description: 'Filter by tag' },
+      { flag: '-l, --limit <n>', description: 'Limit results (default: 20)' },
+      { flag: '--json', description: 'Output as JSON' },
+    ],
+    examples: ['/search', '/search react', '/search --type skill', '/search api --category backend'],
+  }
+);
+
+registerInteractiveCommand(
+  'install',
+  'Install a cognitive from registry, local path, or GitHub',
+  async (args) => {
+    const parts = args.split(/\s+/);
+    let source: string | undefined;
+    const options: Record<string, string | boolean> = {};
+
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      if (part === undefined || part === '') continue;
+
+      if (part === '--type' || part === '-t') {
+        options.type = parts[++i] ?? '';
+      } else if (part === '--category' || part === '-c') {
+        options.category = parts[++i] ?? '';
+      } else if (part === '--force' || part === '-f') {
+        options.force = true;
+      } else if (part === '--sync' || part === '-s') {
+        options.sync = true;
+      } else if (!part.startsWith('-')) {
+        source = part;
+      }
+    }
+
+    if (source === undefined || source === '') {
+      logger.error('Please specify a cognitive to install.');
+      logger.hint('Usage: /install <name|path|github:user/repo>');
+      return;
+    }
+
+    await executeInstallCommand(source, options);
+  },
+  {
+    usage: '/install <source> [options]',
+    options: [
+      { flag: '-t, --type <type>', description: 'Cognitive type (skill, agent, etc.)' },
+      { flag: '-c, --category <cat>', description: 'Category (overrides default)' },
+      { flag: '-f, --force', description: 'Overwrite if already installed' },
+      { flag: '-s, --sync', description: 'Sync to providers after installation' },
+    ],
+    examples: [
+      '/install skill-creator',
+      '/install skill-creator --sync',
+      '/install ./my-skill',
+      '/install github:user/repo',
+      '/install skill-creator --force',
+    ],
+  }
+);
+
+registerInteractiveCommand(
+  'list',
+  'List installed cognitives or browse registry',
+  async (args) => {
+    const parts = args.split(/\s+/);
+    const options: Record<string, string | boolean> = {};
+
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      if (part === undefined || part === '') continue;
+
+      if (part === '--type' || part === '-t') {
+        options.type = parts[++i] ?? '';
+      } else if (part === '--category' || part === '-c') {
+        options.category = parts[++i] ?? '';
+      } else if (part === '--remote' || part === '-r') {
+        options.remote = true;
+      } else if (part === '--json') {
+        options.json = true;
+      }
+    }
+
+    await executeListCommand(options);
+  },
+  {
+    usage: '/list [options]',
+    options: [
+      { flag: '-t, --type <type>', description: 'Filter by type (skill, agent, prompt, etc.)' },
+      { flag: '-c, --category <cat>', description: 'Filter by category' },
+      { flag: '-r, --remote', description: 'Browse all cognitives in registry' },
+      { flag: '--json', description: 'Output as JSON' },
+    ],
+    examples: ['/list', '/list --remote', '/list --type skill', '/list --category backend'],
+  }
+);
+
+registerInteractiveCommand(
+  'uninstall',
+  'Uninstall a cognitive',
+  async (args) => {
+    const parts = args.split(/\s+/);
+    let name: string | undefined;
+    const options: Record<string, boolean> = {};
+
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      if (part === undefined || part === '') continue;
+
+      if (part === '--force' || part === '-f') {
+        options.force = true;
+      } else if (part === '--keep-files') {
+        options.keepFiles = true;
+      } else if (!part.startsWith('-')) {
+        name = part;
+      }
+    }
+
+    if (name === undefined || name === '') {
+      logger.error('Please specify a cognitive to uninstall.');
+      logger.hint('Usage: /uninstall <name> [--force]');
+      return;
+    }
+
+    await executeUninstallCommand(name, options);
+  },
+  {
+    usage: '/uninstall <name> [options]',
+    options: [
+      { flag: '-f, --force', description: 'Skip confirmation' },
+      { flag: '--keep-files', description: 'Remove from manifest but keep files' },
+    ],
+    examples: ['/uninstall skill-creator', '/uninstall my-agent --force'],
+  }
+);
 
 registerInteractiveCommand('create', 'Create a new asset', (_args) => {
   showInfo('Command not yet implemented. Coming in Phase 2.');
@@ -265,17 +439,182 @@ registerInteractiveCommand('create', 'Create a new asset', (_args) => {
 // Sync Commands
 // ============================================
 
-registerInteractiveCommand('sync', 'Sync assets to providers', (_args) => {
-  showInfo('Command not yet implemented. Coming in Phase 2 Week 6.');
+registerInteractiveCommand(
+  'sync',
+  'Sync cognitives to providers',
+  async (args) => {
+    const parts = args.split(/\s+/);
+    const options: Record<string, string | boolean> = {};
+    let subcommand: string | undefined;
+
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      if (part === undefined || part === '') continue;
+
+      if (part === 'status') {
+        subcommand = 'status';
+      } else if (part === '--dry-run' || part === '-n') {
+        options.dryRun = true;
+      } else if (part === '--type' || part === '-t') {
+        options.type = parts[++i] ?? '';
+      } else if (part === '--category' || part === '-c') {
+        options.category = parts[++i] ?? '';
+      } else if (part === '--provider' || part === '-p') {
+        options.provider = parts[++i] ?? '';
+      } else if (part === '--copy') {
+        options.copy = true;
+      } else if (part === '--force' || part === '-f') {
+        options.force = true;
+      } else if (part === '--verbose' || part === '-v') {
+        options.verbose = true;
+      } else if (part === '--json') {
+        options.json = true;
+      }
+    }
+
+    // Call the appropriate function based on subcommand
+    if (subcommand === 'status') {
+      await executeSyncStatusCommand({ json: options.json === true });
+    } else {
+      await executeSyncCommand(options);
+    }
+  },
+  {
+    usage: '/sync [status] [options]',
+    options: [
+      { flag: 'status', description: 'Show sync status without applying changes' },
+      { flag: '-n, --dry-run', description: 'Preview changes without applying' },
+      { flag: '-t, --type <type>', description: 'Sync only a specific type' },
+      { flag: '-c, --category <cat>', description: 'Sync only a specific category' },
+      { flag: '-p, --provider <name>', description: 'Sync only to a specific provider' },
+      { flag: '--copy', description: 'Use file copy instead of symlinks' },
+      { flag: '-f, --force', description: 'Force sync even if already synced' },
+      { flag: '-v, --verbose', description: 'Show detailed output' },
+      { flag: '--json', description: 'Output as JSON' },
+    ],
+    examples: ['/sync', '/sync status', '/sync --dry-run', '/sync --provider claude'],
+  }
+);
+
+registerInteractiveCommand('push', 'Push local cognitives to registry', (_args) => {
+  showInfo('Command not yet implemented. Coming in Phase 3.');
 });
 
-registerInteractiveCommand('push', 'Push local assets to registry', (_args) => {
-  showInfo('Command not yet implemented. Coming in Phase 2.');
+registerInteractiveCommand('pull', 'Pull latest cognitives from registry', (_args) => {
+  showInfo('Command not yet implemented. Coming in Phase 3.');
 });
 
-registerInteractiveCommand('pull', 'Pull latest assets from registry', (_args) => {
-  showInfo('Command not yet implemented. Coming in Phase 2.');
-});
+// ============================================
+// Maintenance Commands
+// ============================================
+
+registerInteractiveCommand(
+  'update',
+  'Update installed cognitives',
+  async (args) => {
+    const parts = args.split(/\s+/);
+    let name: string | undefined;
+    const options: Record<string, string | boolean> = {};
+
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      if (part === undefined || part === '') continue;
+
+      if (part === '--all' || part === '-a') {
+        options.all = true;
+      } else if (part === '--force' || part === '-f') {
+        options.force = true;
+      } else if (part === '--dry-run' || part === '-n') {
+        options.dryRun = true;
+      } else if (part === '--json') {
+        options.json = true;
+      } else if (!part.startsWith('-')) {
+        name = part;
+      }
+    }
+
+    await executeUpdateCommand(name, options);
+  },
+  {
+    usage: '/update [name] [options]',
+    options: [
+      { flag: '-a, --all', description: 'Update all cognitives' },
+      { flag: '-f, --force', description: 'Force update even if current' },
+      { flag: '-n, --dry-run', description: 'Preview updates without applying' },
+      { flag: '--json', description: 'Output as JSON' },
+    ],
+    examples: ['/update skill-creator', '/update --all', '/update --dry-run'],
+  }
+);
+
+registerInteractiveCommand(
+  'doctor',
+  'Check project health and diagnose issues',
+  async (args) => {
+    const parts = args.split(/\s+/);
+    const options: Record<string, boolean> = {};
+
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      if (part === undefined || part === '') continue;
+
+      if (part === '--fix') {
+        options.fix = true;
+      } else if (part === '--verbose' || part === '-v') {
+        options.verbose = true;
+      } else if (part === '--json') {
+        options.json = true;
+      }
+    }
+
+    await executeDoctorCommand(options);
+  },
+  {
+    usage: '/doctor [options]',
+    options: [
+      { flag: '--fix', description: 'Attempt to fix issues automatically' },
+      { flag: '-v, --verbose', description: 'Show detailed output' },
+      { flag: '--json', description: 'Output as JSON' },
+    ],
+    examples: ['/doctor', '/doctor --fix', '/doctor --verbose'],
+  }
+);
+
+registerInteractiveCommand(
+  'clean',
+  'Remove orphaned files and fix broken symlinks',
+  async (args) => {
+    const parts = args.split(/\s+/);
+    const options: Record<string, boolean> = {};
+
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      if (part === undefined || part === '') continue;
+
+      if (part === '--dry-run' || part === '-n') {
+        options.dryRun = true;
+      } else if (part === '--force' || part === '-f') {
+        options.force = true;
+      } else if (part === '--verbose' || part === '-v') {
+        options.verbose = true;
+      } else if (part === '--json') {
+        options.json = true;
+      }
+    }
+
+    await executeCleanCommand(options);
+  },
+  {
+    usage: '/clean [options]',
+    options: [
+      { flag: '-n, --dry-run', description: 'Preview what would be cleaned' },
+      { flag: '-f, --force', description: 'Skip confirmation' },
+      { flag: '-v, --verbose', description: 'Show detailed output' },
+      { flag: '--json', description: 'Output as JSON' },
+    ],
+    examples: ['/clean', '/clean --dry-run', '/clean --force'],
+  }
+);
 
 // ============================================
 // Utility Commands
