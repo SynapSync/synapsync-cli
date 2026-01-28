@@ -12,7 +12,7 @@ docs/
 ├── technical/
 │   ├── specification.md               # Especificacion completa del CLI
 │   ├── project-plan.md                # Plan de proyecto y arquitectura
-│   ├── asset-architecture.md          # Arquitectura de assets (skills, agents, prompts, etc.)
+│   ├── cognitive-architecture.md      # Arquitectura de cognitives (skills, agents, prompts, etc.)
 │   └── cli-analysis.md                # Analisis de CLIs de referencia
 └── roadmap/
     ├── phase-1-foundation.md          # Semanas 1-4: Fundamentos
@@ -31,7 +31,7 @@ docs/
 |----------|-------------|
 | [Specification](./technical/specification.md) | Especificacion completa del CLI incluyendo todos los comandos, UX, y estructuras de configuracion |
 | [Project Plan](./technical/project-plan.md) | Plan de proyecto con arquitectura, stack tecnologico, estructura de modulos, y estrategia de testing |
-| [Asset Architecture](./technical/asset-architecture.md) | **Arquitectura de almacenamiento de assets (skills, agents, prompts, workflows, tools), sync con symlinks, y estructura de providers** |
+| [Cognitive Architecture](./technical/cognitive-architecture.md) | **Arquitectura de almacenamiento de cognitives (skills, agents, prompts, workflows, tools), sync con symlinks, y estructura de providers** |
 | [CLI Analysis](./technical/cli-analysis.md) | Analisis de CLIs de referencia (vercel-labs/skills, openskills) con patrones y recomendaciones |
 
 ### Roadmap
@@ -52,17 +52,17 @@ SynapSync CLI es una herramienta de linea de comandos para orquestacion de capac
 ### Key Features
 
 - **Multi-Provider Support**: Claude, OpenAI, Gemini, Cursor, Windsurf, Copilot
-- **Multi-Asset Management**: Gestiona skills, agents, prompts, workflows y tools
-- **Organization by Category**: Assets organizados por categoria (frontend, backend, devops, security, etc.)
-- **Symlink Sync**: Sincronizar assets a providers via symlinks (single source of truth)
+- **Multi-Cognitive Management**: Gestiona cognitives (skills, agents, prompts, workflows, tools)
+- **Organization by Category**: Cognitives organizados por categoria (frontend, backend, devops, security, etc.)
+- **Symlink Sync**: Sincronizar cognitives a providers via symlinks (single source of truth)
 - **Workflow Orchestration**: Pipelines multi-paso con agentes
-- **Registry Integration**: Compartir assets con la comunidad
+- **Registry Integration**: Compartir cognitives con la comunidad
 
-### Asset Types
+### Cognitive Types
 
-SynapSync soporta multiples tipos de assets de IA:
+SynapSync soporta multiples tipos de cognitives de IA:
 
-| Asset Type | Description | File |
+| Cognitive Type | Description | File |
 |------------|-------------|------|
 | **Skill** | Instrucciones reutilizables para asistentes de IA | `SKILL.md` |
 | **Agent** | Entidades AI autonomas con comportamientos especificos | `AGENT.md` |
@@ -70,7 +70,7 @@ SynapSync soporta multiples tipos de assets de IA:
 | **Workflow** | Procesos multi-paso que combinan agentes y prompts | `WORKFLOW.yaml` |
 | **Tool** | Integraciones externas y funciones | `TOOL.md` |
 
-### Asset Storage Architecture
+### Cognitive Storage Architecture
 
 ```
 .synapsync/                            # Central storage (configurable)
@@ -114,7 +114,7 @@ synapsync version           # Version y info del sistema
 synapsync
 > /help                     # Ayuda del modo REPL
 > /version                  # Version del CLI
-> /info --assets            # Documentacion de tipos de assets
+> /info --cognitives        # Documentacion de tipos de cognitives
 > /info --install           # Documentacion de fuentes de instalacion
 > /info --providers         # Proveedores soportados
 > /info --categories        # Categorias de organizacion
@@ -130,12 +130,12 @@ synapsync
 synapsync init              # Inicializar proyecto
 synapsync connect           # Conectar proveedores de IA
 
-# Asset management (works with all asset types)
-synapsync search            # Buscar assets en registry
-synapsync install           # Instalar asset (skill, agent, prompt, etc.)
-synapsync list              # Listar assets instalados
-synapsync create            # Crear nuevo asset
-synapsync sync              # Sincronizar assets a providers
+# Cognitive management (works with all cognitive types)
+synapsync search            # Buscar cognitives en registry
+synapsync install           # Instalar cognitive (skill, agent, prompt, etc.)
+synapsync list              # Listar cognitives instalados
+synapsync create            # Crear nuevo cognitive
+synapsync sync              # Sincronizar cognitives a providers
 
 # Specialized commands
 synapsync run               # Ejecutar skill o workflow
@@ -185,3 +185,4 @@ Para comenzar el desarrollo, consulta:
 | 1.1.0 | 2025-01-27 | Added skill architecture by department, sync with symlinks |
 | 2.0.0 | 2025-01-27 | Expanded to multi-asset architecture (skills, agents, prompts, workflows, tools) |
 | 2.1.0 | 2025-01-27 | Updated with implementation status, implemented commands, REPL mode |
+| 3.0.0 | 2025-01-27 | Renamed "asset" to "cognitive" terminology throughout |

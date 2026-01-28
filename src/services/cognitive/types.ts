@@ -1,8 +1,8 @@
 /**
- * Asset service types
+ * Cognitive service types
  */
 
-import type { AssetType, Category, SupportedProvider } from '../../core/constants.js';
+import type { CognitiveType, Category, SupportedProvider } from '../../core/constants.js';
 
 // ============================================
 // Installation Source Types
@@ -30,7 +30,7 @@ export interface InstallSource {
 // ============================================
 
 /**
- * How the asset type was detected
+ * How the cognitive type was detected
  */
 export type DetectionMethod =
   | 'flag' // User provided --type flag
@@ -40,14 +40,14 @@ export type DetectionMethod =
   | 'unknown'; // Could not detect
 
 /**
- * Result of asset type detection
+ * Result of cognitive type detection
  */
-export interface AssetDetectionResult {
-  type: AssetType | null;
+export interface CognitiveDetectionResult {
+  type: CognitiveType | null;
   method: DetectionMethod;
   confidence: 'high' | 'medium' | 'low';
   source: InstallSource;
-  metadata?: AssetRegistryMetadata;
+  metadata?: CognitiveRegistryMetadata;
 }
 
 // ============================================
@@ -55,11 +55,11 @@ export interface AssetDetectionResult {
 // ============================================
 
 /**
- * Metadata returned from registry for an asset
+ * Metadata returned from registry for a cognitive
  */
-export interface AssetRegistryMetadata {
+export interface CognitiveRegistryMetadata {
   name: string;
-  type: AssetType;
+  type: CognitiveType;
   version: string;
   category: Category;
   description: string;
@@ -76,11 +76,11 @@ export interface AssetRegistryMetadata {
 // ============================================
 
 /**
- * Result of scanning a directory for asset files
+ * Result of scanning a directory for cognitive files
  */
 export interface FileDetectionResult {
   found: boolean;
-  type: AssetType | null;
+  type: CognitiveType | null;
   fileName: string | null;
   filePath: string | null;
 }
@@ -93,7 +93,7 @@ export interface FileDetectionResult {
  * Options for install command
  */
 export interface InstallOptions {
-  type?: AssetType; // Explicit type from --type flag
+  type?: CognitiveType; // Explicit type from --type flag
   category?: Category; // Explicit category from --category flag
   version?: string; // Specific version to install
   global?: boolean; // Install globally
@@ -105,4 +105,4 @@ export interface InstallOptions {
 // Re-exports
 // ============================================
 
-export type { AssetType, Category, SupportedProvider };
+export type { CognitiveType, Category, SupportedProvider };

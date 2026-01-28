@@ -28,8 +28,8 @@ export const colors = {
   path: pc.underline,
   url: pc.blue,
 
-  // Asset type colors
-  assetType: {
+  // Cognitive type colors
+  cognitiveType: {
     skill: '\x1b[38;5;39m', // Blue
     agent: '\x1b[38;5;208m', // Orange
     prompt: '\x1b[38;5;135m', // Purple
@@ -62,11 +62,11 @@ export const colors = {
 };
 
 /**
- * Apply asset type color to text
+ * Apply cognitive type color to text
  */
-export function colorAssetType(type: string, text: string): string {
-  const defaultColor = colors.assetType['skill'] ?? '';
-  const color = colors.assetType[type] ?? defaultColor;
+export function colorCognitiveType(type: string, text: string): string {
+  const defaultColor = colors.cognitiveType['skill'] ?? '';
+  const color = colors.cognitiveType[type] ?? defaultColor;
   return `${color}${text}${RESET}`;
 }
 

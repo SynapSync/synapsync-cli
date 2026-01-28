@@ -17,14 +17,14 @@ interface InfoTopic {
 }
 
 const INFO_TOPICS: Record<string, InfoTopic> = {
-  assets: {
-    name: 'Assets',
-    description: 'Types of AI resources managed by SynapSync',
-    content: showAssetsInfo,
+  cognitives: {
+    name: 'Cognitives',
+    description: 'Types of AI cognitives managed by SynapSync',
+    content: showCognitivesInfo,
   },
   install: {
     name: 'Install',
-    description: 'How to install assets from different sources',
+    description: 'How to install cognitives from different sources',
     content: showInstallInfo,
   },
   providers: {
@@ -34,7 +34,7 @@ const INFO_TOPICS: Record<string, InfoTopic> = {
   },
   categories: {
     name: 'Categories',
-    description: 'Asset organization categories',
+    description: 'Cognitive organization categories',
     content: showCategoriesInfo,
   },
   sync: {
@@ -53,18 +53,18 @@ const INFO_TOPICS: Record<string, InfoTopic> = {
 // Topic Content Functions
 // ============================================
 
-function showAssetsInfo(): void {
+function showCognitivesInfo(): void {
   logger.line();
-  logger.log(pc.bold(pc.cyan('  Asset Types')));
+  logger.log(pc.bold(pc.cyan('  Cognitive Types')));
   logger.line();
   logger.dim(
-    '  SynapSync manages multiple types of AI assets that can be installed,'
+    '  SynapSync manages multiple types of AI cognitives that can be installed,'
   );
   logger.dim('  synced across providers, and shared via the registry.');
   logger.line();
 
-  // Assets table
-  const assets = [
+  // Cognitives table
+  const cognitives = [
     {
       type: 'skill',
       file: 'SKILL.md',
@@ -104,10 +104,10 @@ function showAssetsInfo(): void {
   logger.log(pc.dim('  ' + '─'.repeat(70)));
 
   // Rows
-  for (const asset of assets) {
-    const typeCol = asset.color(asset.type.padEnd(10));
-    const fileCol = pc.white(asset.file.padEnd(16));
-    const descCol = pc.dim(asset.description);
+  for (const cognitive of cognitives) {
+    const typeCol = cognitive.color(cognitive.type.padEnd(10));
+    const fileCol = pc.white(cognitive.file.padEnd(16));
+    const descCol = pc.dim(cognitive.description);
     logger.log(`  ${typeCol}  ${fileCol} ${descCol}`);
   }
 
@@ -125,14 +125,14 @@ function showAssetsInfo(): void {
   // Storage hint
   logger.log(pc.bold('  Storage:'));
   logger.line();
-  logger.dim('  Assets are stored in .synapsync/{type}s/{category}/{name}/');
+  logger.dim('  Cognitives are stored in .synapsync/{type}s/{category}/{name}/');
   logger.dim('  Example: .synapsync/skills/frontend/react-patterns/SKILL.md');
   logger.line();
 
   // Detection
   logger.log(pc.bold('  Type Detection:'));
   logger.line();
-  logger.dim('  When installing, SynapSync detects the asset type automatically:');
+  logger.dim('  When installing, SynapSync detects the cognitive type automatically:');
   logger.line();
   logger.log(`  ${pc.cyan('1.')} ${pc.white('Flag')}       ${pc.dim('--type skill (explicit, highest priority)')}`);
   logger.log(`  ${pc.cyan('2.')} ${pc.white('Registry')}   ${pc.dim('Metadata from the registry')}`);
@@ -145,7 +145,7 @@ function showInstallInfo(): void {
   logger.line();
   logger.log(pc.bold(pc.cyan('  Installation Sources')));
   logger.line();
-  logger.dim('  SynapSync can install assets from multiple sources:');
+  logger.dim('  SynapSync can install cognitives from multiple sources:');
   logger.line();
 
   // Sources table
@@ -160,7 +160,7 @@ function showInstallInfo(): void {
     },
     {
       source: 'Local',
-      format: 'synapsync install ./path/to/asset',
+      format: 'synapsync install ./path/to/cognitive',
       description: 'From local file system',
     },
     {
@@ -170,7 +170,7 @@ function showInstallInfo(): void {
     },
     {
       source: 'GitHub Path',
-      format: 'synapsync install github:user/repo/assets/skill',
+      format: 'synapsync install github:user/repo/cognitives/skill',
       description: 'Specific path in repo',
     },
     {
@@ -194,7 +194,7 @@ function showInstallInfo(): void {
   // Type detection
   logger.log(pc.bold('  Type Detection:'));
   logger.line();
-  logger.dim('  SynapSync automatically detects the asset type using:');
+  logger.dim('  SynapSync automatically detects the cognitive type using:');
   logger.line();
 
   logger.log(`  ${pc.cyan('1.')} ${pc.white('Explicit flag')}     ${pc.dim('synapsync install code-reviewer --type skill')}`);
@@ -214,7 +214,7 @@ function showInstallInfo(): void {
   // Options
   logger.log(pc.bold('  Common Options:'));
   logger.line();
-  logger.log(`  ${pc.yellow('--type <type>')}       ${pc.dim('Explicit asset type (skill, agent, prompt, workflow, tool)')}`);
+  logger.log(`  ${pc.yellow('--type <type>')}       ${pc.dim('Explicit cognitive type (skill, agent, prompt, workflow, tool)')}`);
   logger.log(`  ${pc.yellow('--category <cat>')}    ${pc.dim('Explicit category (frontend, backend, etc.)')}`);
   logger.log(`  ${pc.yellow('--global')}            ${pc.dim('Install globally for all projects')}`);
   logger.log(`  ${pc.yellow('--force')}             ${pc.dim('Force reinstall even if exists')}`);
@@ -225,8 +225,8 @@ function showProvidersInfo(): void {
   logger.line();
   logger.log(pc.bold(pc.cyan('  Supported Providers')));
   logger.line();
-  logger.dim('  SynapSync can sync your assets to multiple AI providers.');
-  logger.dim('  Each provider has its own directory structure for assets.');
+  logger.dim('  SynapSync can sync your cognitives to multiple AI providers.');
+  logger.dim('  Each provider has its own directory structure for cognitives.');
   logger.line();
 
   const providers = [
@@ -263,10 +263,10 @@ function showProvidersInfo(): void {
 
 function showCategoriesInfo(): void {
   logger.line();
-  logger.log(pc.bold(pc.cyan('  Asset Categories')));
+  logger.log(pc.bold(pc.cyan('  Cognitive Categories')));
   logger.line();
-  logger.dim('  Assets are organized by category for better management.');
-  logger.dim('  Categories help group related assets together.');
+  logger.dim('  Cognitives are organized by category for better management.');
+  logger.dim('  Categories help group related cognitives together.');
   logger.line();
 
   const categories = [
@@ -307,7 +307,7 @@ function showSyncInfo(): void {
   logger.line();
   logger.log(pc.bold(pc.cyan('  Synchronization')));
   logger.line();
-  logger.dim('  Sync copies or links your assets to provider directories.');
+  logger.dim('  Sync copies or links your cognitives to provider directories.');
   logger.dim('  This makes them available to each AI provider.');
   logger.line();
 
@@ -336,7 +336,7 @@ function showSyncInfo(): void {
 
   logger.log(pc.bold('  Commands:'));
   logger.line();
-  logger.log(`  ${pc.dim('$')} ${pc.cyan('synapsync sync')}                ${pc.dim('# Sync all assets to all providers')}`);
+  logger.log(`  ${pc.dim('$')} ${pc.cyan('synapsync sync')}                ${pc.dim('# Sync all cognitives to all providers')}`);
   logger.log(`  ${pc.dim('$')} ${pc.cyan('synapsync sync')} --provider claude  ${pc.dim('# Sync to specific provider')}`);
   logger.log(`  ${pc.dim('$')} ${pc.cyan('synapsync sync')} --type skill       ${pc.dim('# Sync only skills')}`);
   logger.log(`  ${pc.dim('$')} ${pc.cyan('synapsync sync')} --copy             ${pc.dim('# Force copy mode')}`);
@@ -352,8 +352,8 @@ function showStructureInfo(): void {
   logger.line();
 
   const structure = `
-  ${pc.cyan('.synapsync/')}                    ${pc.dim('# Central asset storage')}
-  ${pc.dim('├──')} ${pc.white('manifest.json')}            ${pc.dim('# Installed assets manifest')}
+  ${pc.cyan('.synapsync/')}                    ${pc.dim('# Central cognitive storage')}
+  ${pc.dim('├──')} ${pc.white('manifest.json')}            ${pc.dim('# Installed cognitives manifest')}
   ${pc.dim('├──')} ${pc.cyan('skills/')}                   ${pc.dim('# Skills by category')}
   ${pc.dim('│   ├──')} ${pc.cyan('frontend/')}
   ${pc.dim('│   ├──')} ${pc.cyan('backend/')}
@@ -387,10 +387,10 @@ function showAllTopics(): void {
   logger.line();
 
   const topics = [
-    { flag: '--assets', desc: 'Types of AI resources (skills, agents, prompts, etc.)' },
+    { flag: '--cognitives', desc: 'Types of AI cognitives (skills, agents, prompts, etc.)' },
     { flag: '--install', desc: 'How to install from registry, GitHub, local' },
     { flag: '--providers', desc: 'Supported AI providers (Claude, OpenAI, etc.)' },
-    { flag: '--categories', desc: 'Asset organization categories' },
+    { flag: '--categories', desc: 'Cognitive organization categories' },
     { flag: '--sync', desc: 'How synchronization works' },
     { flag: '--structure', desc: 'Project directory structure' },
   ];
@@ -400,7 +400,7 @@ function showAllTopics(): void {
   }
 
   logger.line();
-  logger.dim('  Example: /info --assets');
+  logger.dim('  Example: /info --cognitives');
   logger.line();
 }
 
@@ -459,10 +459,10 @@ export function registerInfoCommand(program: Command): void {
   program
     .command('info')
     .description('Show information about SynapSync concepts')
-    .option('--assets', 'Show asset types information')
+    .option('--cognitives', 'Show cognitive types information')
     .option('--install', 'Show installation sources and detection')
     .option('--providers', 'Show supported providers')
-    .option('--categories', 'Show asset categories')
+    .option('--categories', 'Show cognitive categories')
     .option('--sync', 'Show sync information')
     .option('--structure', 'Show project structure')
     .action((options: Record<string, boolean>) => {

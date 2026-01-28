@@ -1,18 +1,22 @@
-# Asset Architecture
+# Cognitive Architecture
 
-> Documento que describe la arquitectura de almacenamiento y sincronizacion de assets en SynapSync CLI.
+> Documento que describe la arquitectura de almacenamiento y sincronizacion de cognitives en SynapSync CLI.
 
 ---
 
 ## 1. Overview
 
-SynapSync gestiona multiples tipos de **assets de IA** (skills, agents, prompts, workflows, tools) en una estructura centralizada por **categoria**, permitiendo una gestion ordenada del "cerebro" de capacidades. Cuando se sincronizan con proveedores de IA, los assets se exponen en formato flat (sin categorias) segun los requerimientos de cada proveedor.
+SynapSync gestiona multiples tipos de **cognitives de IA** (skills, agents, prompts, workflows, tools) en una estructura centralizada por **categoria**, permitiendo una gestion ordenada del "cerebro" de capacidades. Cuando se sincronizan con proveedores de IA, los cognitives se exponen en formato flat (sin categorias) segun los requerimientos de cada proveedor.
+
+**¿Por qué "Cognitives"?**
+
+El término "cognitive" representa los recursos cognitivos que potencian las capacidades de IA. Es un término paraguas que engloba skills, agents, prompts, workflows y tools - todos los building blocks que conforman el "cerebro" de tu sistema de IA.
 
 ---
 
-## 2. Asset Types
+## 2. Cognitive Types
 
-SynapSync soporta los siguientes tipos de assets:
+SynapSync soporta los siguientes tipos de cognitives:
 
 | Type | File | Description |
 |------|------|-------------|
@@ -30,7 +34,7 @@ SynapSync soporta los siguientes tipos de assets:
 
 ```
 .synapsync/                           # Base directory (configurable)
-├── manifest.json                     # Central manifest of all assets
+├── manifest.json                     # Central manifest of all cognitives
 │
 ├── skills/                           # Skills by category
 │   ├── frontend/
@@ -103,7 +107,7 @@ SynapSync soporta los siguientes tipos de assets:
 
 ### 3.2 Provider-Specific Directories (Flat Structure)
 
-Los proveedores leen assets en estructura flat, sin categorias:
+Los proveedores leen cognitives en estructura flat, sin categorias:
 
 ```
 .claude/                              # Claude provider
@@ -176,10 +180,10 @@ sync:
 
 ```typescript
 // src/core/constants.ts
-export const ASSET_TYPES = ['skill', 'agent', 'prompt', 'workflow', 'tool'] as const;
-export type AssetType = (typeof ASSET_TYPES)[number];
+export const COGNITIVE_TYPES = ['skill', 'agent', 'prompt', 'workflow', 'tool'] as const;
+export type CognitiveType = (typeof COGNITIVE_TYPES)[number];
 
-export const ASSET_FILE_NAMES: Record<AssetType, string> = {
+export const COGNITIVE_FILE_NAMES: Record<CognitiveType, string> = {
   skill: 'SKILL.md',
   agent: 'AGENT.md',
   prompt: 'PROMPT.md',
@@ -210,7 +214,7 @@ export const SUPPORTED_PROVIDERS = [
   'copilot',
 ] as const;
 
-export const PROVIDER_PATHS: Record<SupportedProvider, Record<AssetType, string>> = {
+export const PROVIDER_PATHS: Record<SupportedProvider, Record<CognitiveType, string>> = {
   claude: {
     skill: '.claude/skills',
     agent: '.claude/agents',
@@ -224,7 +228,7 @@ export const PROVIDER_PATHS: Record<SupportedProvider, Record<AssetType, string>
 
 ---
 
-## 5. Asset File Formats
+## 5. Cognitive File Formats
 
 ### 5.1 SKILL.md Structure
 
@@ -401,14 +405,14 @@ Tool for interacting with GitHub API...
 ### 6.1 Install Command
 
 ```bash
-# Install asset to central storage
+# Install cognitive to central storage
 synapsync install code-reviewer
 
 # Behavior:
-# 1. Download asset from registry
-# 2. Detect asset type from metadata
+# 1. Download cognitive from registry
+# 2. Detect cognitive type from metadata
 # 3. Detect or prompt for category
-# 4. Save to .synapsync/{asset-type}s/{category}/{asset-name}/{FILE}
+# 4. Save to .synapsync/{cognitive-type}s/{category}/{cognitive-name}/{FILE}
 # 5. Update manifest.json
 ```
 
@@ -417,7 +421,7 @@ synapsync install code-reviewer
 synapsync install code-reviewer --category general
 synapsync install ci-agent --category automation
 
-# Install specific asset type
+# Install specific cognitive type
 synapsync install code-review-prompt --type prompt
 ```
 
@@ -431,10 +435,10 @@ synapsync sync
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                     SynapSync Asset Sync                         │
+│                    SynapSync Cognitive Sync                      │
 └─────────────────────────────────────────────────────────────────┘
 
-📦 Available Assets (35 total)
+📦 Available Cognitives (35 total)
 
   Skills (15):
     frontend/ (5) │ backend/ (4) │ security/ (2) │ general/ (4)
@@ -451,11 +455,11 @@ synapsync sync
   Tools (2):
     integrations/ (2)
 
-? Select assets to sync:
-  ◉ All assets (35)
+? Select cognitives to sync:
+  ◉ All cognitives (35)
   ○ By type (skills, agents, etc.)
   ○ By category
-  ○ Select individual assets
+  ○ Select individual cognitives
 
 ? Select target providers:
   ◉ claude
@@ -466,7 +470,7 @@ synapsync sync
   ◉ Symlink (Recommended) - Changes reflect automatically
   ○ Copy - Independent copies in each provider folder
 
-⠋ Syncing 35 assets to 2 providers...
+⠋ Syncing 35 cognitives to 2 providers...
 
 ✓ Synced to .claude/ (35 symlinks)
 ✓ Synced to .openai/ (35 symlinks)
@@ -474,7 +478,7 @@ synapsync sync
 ┌───────────────────────────────────────┐
 │            Sync Complete              │
 ├───────────────────────────────────────┤
-│  Assets synced: 35                    │
+│  Cognitives synced: 35                │
 │  Providers: claude, openai            │
 │  Method: symlink                      │
 │  Conflicts: 0                         │
@@ -490,14 +494,14 @@ synapsync sync
 # Sync to specific provider
 synapsync sync --provider claude
 
-# Sync specific asset type
+# Sync specific cognitive type
 synapsync sync --type skill
 synapsync sync --type agent
 
 # Sync specific category
 synapsync sync --category frontend
 
-# Sync specific asset
+# Sync specific cognitive
 synapsync sync code-reviewer
 
 # Non-interactive (use config defaults)
@@ -518,7 +522,7 @@ synapsync sync --dry-run
 
 **Advantages:**
 - Single source of truth in `.synapsync/`
-- Changes to asset reflect immediately in all providers
+- Changes to cognitive reflect immediately in all providers
 - Less disk space
 - Easier to manage updates
 
@@ -544,12 +548,12 @@ synapsync sync --dry-run
 
 ## 8. Data Models
 
-### 8.1 Asset (Base)
+### 8.1 Cognitive (Base)
 
 ```typescript
-interface AssetMetadata {
+interface CognitiveMetadata {
   name: string;
-  type: AssetType;
+  type: CognitiveType;
   version: string;
   category: Category;
   description: string;
@@ -558,37 +562,37 @@ interface AssetMetadata {
   providers?: SupportedProvider[];
 }
 
-interface Asset extends AssetMetadata {
+interface Cognitive extends CognitiveMetadata {
   content: string;
   path: string;
 }
 ```
 
-### 8.2 Specialized Assets
+### 8.2 Specialized Cognitives
 
 ```typescript
-interface Skill extends Asset {
+interface Skill extends Cognitive {
   type: 'skill';
 }
 
-interface Agent extends Asset {
+interface Agent extends Cognitive {
   type: 'agent';
   capabilities?: string[];
   systemPrompt?: string;
 }
 
-interface Prompt extends Asset {
+interface Prompt extends Cognitive {
   type: 'prompt';
   variables?: string[];
   examples?: string[];
 }
 
-interface Workflow extends Asset {
+interface Workflow extends Cognitive {
   type: 'workflow';
   steps?: WorkflowStep[];
 }
 
-interface Tool extends Asset {
+interface Tool extends Cognitive {
   type: 'tool';
   schema?: Record<string, unknown>;
   endpoint?: string;
@@ -602,17 +606,17 @@ interface Tool extends Asset {
 interface SynapSyncManifest {
   version: string;
   lastUpdated: string;
-  assets: Record<string, InstalledAsset>;
+  cognitives: Record<string, InstalledCognitive>;
   syncs: Record<SupportedProvider, {
     lastSync: string;
     method: 'symlink' | 'copy';
-    assets: string[];
+    cognitives: string[];
   }>;
 }
 
-interface InstalledAsset {
+interface InstalledCognitive {
   name: string;
-  type: AssetType;
+  type: CognitiveType;
   category: Category;
   version: string;
   installedAt: Date;
@@ -625,9 +629,9 @@ interface InstalledAsset {
 
 ## 9. Edge Cases
 
-### 9.1 Asset Name Conflicts
+### 9.1 Cognitive Name Conflicts
 
-If two categories have assets with the same name:
+If two categories have cognitives with the same name:
 
 ```
 .synapsync/skills/frontend/validator/SKILL.md
@@ -637,13 +641,13 @@ If two categories have assets with the same name:
 **Resolution:**
 - When syncing, warn about conflict
 - Offer options:
-  1. Rename one asset (validator-frontend, validator-backend)
+  1. Rename one cognitive (validator-frontend, validator-backend)
   2. Skip one
   3. Use qualified name in provider
 
-### 9.2 Cross-Asset Type Conflicts
+### 9.2 Cross-Cognitive Type Conflicts
 
-If different asset types have the same name:
+If different cognitive types have the same name:
 
 ```
 .synapsync/skills/general/code-review/SKILL.md
@@ -658,9 +662,9 @@ If different asset types have the same name:
 
 ## 10. Future Considerations
 
-### 10.1 Asset Composition
+### 10.1 Cognitive Composition
 
-Assets that reference other assets:
+Cognitives that reference other cognitives:
 
 ```yaml
 # WORKFLOW.yaml
@@ -673,9 +677,9 @@ steps:
     prompt: summarize
 ```
 
-### 10.2 Asset Inheritance
+### 10.2 Cognitive Inheritance
 
-Assets that extend other assets:
+Cognitives that extend other cognitives:
 
 ```yaml
 ---
@@ -687,14 +691,14 @@ category: frontend
 
 ### 10.3 Remote Sync
 
-Sync assets to cloud storage for multi-machine access:
+Sync cognitives to cloud storage for multi-machine access:
 
 ```yaml
 sync:
   remote:
     enabled: true
     provider: github
-    repo: user/my-synapsync-assets
+    repo: user/my-synapsync-cognitives
 ```
 
 ---
@@ -705,3 +709,4 @@ sync:
 |---------|------|---------|
 | 1.0.0 | 2025-01-27 | Initial architecture document (skills only) |
 | 2.0.0 | 2025-01-27 | Expanded to multi-asset architecture |
+| 3.0.0 | 2025-01-27 | Renamed from "asset" to "cognitive" terminology |

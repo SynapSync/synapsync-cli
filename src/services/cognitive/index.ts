@@ -1,18 +1,18 @@
 /**
- * Asset Service
+ * Cognitive Service
  *
- * Handles asset detection, installation, and management
+ * Handles cognitive detection, installation, and management
  */
 
 // Types
 export type {
   InstallSource,
   InstallSourceType,
-  AssetDetectionResult,
+  CognitiveDetectionResult,
   FileDetectionResult,
-  AssetRegistryMetadata,
+  CognitiveRegistryMetadata,
   InstallOptions,
-  AssetType,
+  CognitiveType,
   Category,
   SupportedProvider,
 } from './types.js';
@@ -24,33 +24,33 @@ export {
   detectFromRegistry,
   detectFromLocalFiles,
   detectFromGitHub,
-  detectAssetType,
-  ASSET_TYPES,
-  ASSET_FILE_NAMES,
+  detectCognitiveType,
+  COGNITIVE_TYPES,
+  COGNITIVE_FILE_NAMES,
 } from './detector.js';
 
 // Prompter
 export {
-  promptForAssetType,
+  promptForCognitiveType,
   showDetectionResult,
-  confirmAssetType,
+  confirmCognitiveType,
 } from './prompter.js';
 
 // ============================================
 // High-level API
 // ============================================
 
-import { detectAssetType } from './detector.js';
-import { promptForAssetType, showDetectionResult } from './prompter.js';
-import type { InstallOptions, AssetType } from './types.js';
+import { detectCognitiveType } from './detector.js';
+import { promptForCognitiveType, showDetectionResult } from './prompter.js';
+import type { InstallOptions, CognitiveType } from './types.js';
 import { logger } from '../../utils/logger.js';
 
 /**
- * Result of asset resolution
+ * Result of cognitive resolution
  */
-export interface ResolvedAsset {
+export interface ResolvedCognitive {
   name: string;
-  type: AssetType;
+  type: CognitiveType;
   method: string;
   source: {
     type: string;
@@ -63,25 +63,25 @@ export interface ResolvedAsset {
 }
 
 /**
- * Resolve asset type from source string
+ * Resolve cognitive type from source string
  *
- * This is the main entry point for determining what type an asset is.
+ * This is the main entry point for determining what type a cognitive is.
  * It will:
  * 1. Try auto-detection strategies
  * 2. Fall back to interactive prompt if needed
- * 3. Return the resolved asset with type information
+ * 3. Return the resolved cognitive with type information
  */
-export async function resolveAsset(
+export async function resolveCognitive(
   sourceString: string,
   options: InstallOptions = {}
-): Promise<ResolvedAsset> {
+): Promise<ResolvedCognitive> {
   // Extract name from source
-  const name = extractAssetName(sourceString);
+  const name = extractCognitiveName(sourceString);
 
   // Try auto-detection
-  const detection = await detectAssetType(sourceString, options);
+  const detection = await detectCognitiveType(sourceString, options);
 
-  let finalType: AssetType;
+  let finalType: CognitiveType;
   let method = detection.method;
 
   if (detection.type) {
@@ -91,7 +91,7 @@ export async function resolveAsset(
   } else {
     // Could not auto-detect, prompt user
     logger.debug(`Auto-detection failed for: ${sourceString}`);
-    finalType = await promptForAssetType(name);
+    finalType = await promptForCognitiveType(name);
     method = 'prompt';
   }
 
@@ -104,9 +104,9 @@ export async function resolveAsset(
 }
 
 /**
- * Extract asset name from source string
+ * Extract cognitive name from source string
  */
-function extractAssetName(source: string): string {
+function extractCognitiveName(source: string): string {
   const trimmed = source.trim();
 
   // Local path: get directory/file name
