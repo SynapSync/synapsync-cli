@@ -15,7 +15,7 @@ import type {
   CognitiveSymlinkMapping,
 } from './types.js';
 import type { SupportedProvider, CognitiveType } from '../../core/constants.js';
-import { PROVIDER_PATHS, COGNITIVE_TYPES } from '../../core/constants.js';
+import { PROVIDER_PATHS, COGNITIVE_TYPES, COGNITIVE_SYNC_MODE } from '../../core/constants.js';
 import type { ScannedCognitive } from '../scanner/types.js';
 
 export class SymlinkManager {
@@ -166,7 +166,8 @@ export class SymlinkManager {
 
   /**
    * Get mappings for cognitives to provider paths
-   * Maps cognitive files to flat files in provider directories
+   * Skills sync as folders (contain SKILL.md + assets/)
+   * Other cognitives sync as flat files
    */
   private getMappings(
     provider: SupportedProvider,
@@ -179,18 +180,30 @@ export class SymlinkManager {
       const typeDir = providerPaths[cognitive.type];
       if (typeDir === undefined) continue;
 
-      // Use the original filename if available, otherwise use name + extension
-      const fileName = cognitive.fileName ?? `${cognitive.name}.md`;
+      const syncMode = COGNITIVE_SYNC_MODE[cognitive.type];
 
-      mappings.push({
-        cognitiveName: cognitive.name,
-        cognitiveType: cognitive.type,
-        // Source is the actual file, not the folder
-        sourcePath: cognitive.filePath,
-        // Target is a flat file in the provider directory
-        targetPath: path.join(this.projectRoot, typeDir, fileName),
-        isFile: true,
-      });
+      if (syncMode === 'folder') {
+        // Folder sync: symlink the entire cognitive directory
+        // e.g., .claude/skills/skill-name/ -> .synapsync/skills/general/skill-name/
+        mappings.push({
+          cognitiveName: cognitive.name,
+          cognitiveType: cognitive.type,
+          sourcePath: cognitive.path, // Directory path
+          targetPath: path.join(this.projectRoot, typeDir, cognitive.name),
+          isFile: false,
+        });
+      } else {
+        // File sync: symlink the cognitive file directly
+        // e.g., .claude/agents/agent-name.md -> .synapsync/agents/general/agent-name/agent-name.md
+        const fileName = cognitive.fileName ?? `${cognitive.name}.md`;
+        mappings.push({
+          cognitiveName: cognitive.name,
+          cognitiveType: cognitive.type,
+          sourcePath: cognitive.filePath, // File path
+          targetPath: path.join(this.projectRoot, typeDir, fileName),
+          isFile: true,
+        });
+      }
     }
 
     return mappings;
@@ -239,8 +252,23 @@ export class SymlinkManager {
       const stats = fs.lstatSync(linkPath);
       const isSymlink = stats.isSymbolicLink();
       const baseName = path.basename(linkPath);
-      // Remove extension to get cognitive name (e.g., "my-agent.md" -> "my-agent")
-      const cognitiveName = baseName.replace(/\.(md|yaml)$/i, '');
+
+      // For symlinks, check what type it points to
+      let isDirectory = stats.isDirectory();
+      if (isSymlink) {
+        try {
+          const realStats = fs.statSync(linkPath);
+          isDirectory = realStats.isDirectory();
+        } catch {
+          // Target doesn't exist, assume based on extension
+          isDirectory = !baseName.match(/\.(md|yaml)$/i);
+        }
+      }
+
+      // Only strip extension for files, not directories
+      // Folders: "skill-name" stays "skill-name"
+      // Files: "agent-name.md" becomes "agent-name"
+      const cognitiveName = isDirectory ? baseName : baseName.replace(/\.(md|yaml)$/i, '');
 
       let target = '';
       let isValid = false;
