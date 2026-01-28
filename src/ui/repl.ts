@@ -395,7 +395,7 @@ registerInteractiveCommand(
 registerInteractiveCommand(
   'uninstall',
   'Uninstall a cognitive',
-  async (args) => {
+  (args) => {
     const parts = args.split(/\s+/);
     let name: string | undefined;
     const options: Record<string, boolean> = {};
@@ -419,7 +419,7 @@ registerInteractiveCommand(
       return;
     }
 
-    await executeUninstallCommand(name, options);
+    executeUninstallCommand(name, options);
   },
   {
     usage: '/uninstall <name> [options]',
@@ -442,7 +442,7 @@ registerInteractiveCommand('create', 'Create a new asset', (_args) => {
 registerInteractiveCommand(
   'sync',
   'Sync cognitives to providers',
-  async (args) => {
+  (args) => {
     const parts = args.split(/\s+/);
     const options: Record<string, string | boolean> = {};
     let subcommand: string | undefined;
@@ -474,9 +474,9 @@ registerInteractiveCommand(
 
     // Call the appropriate function based on subcommand
     if (subcommand === 'status') {
-      await executeSyncStatusCommand({ json: options.json === true });
+      executeSyncStatusCommand({ json: options.json === true });
     } else {
-      await executeSyncCommand(options);
+      executeSyncCommand(options);
     }
   },
   {
@@ -583,7 +583,7 @@ registerInteractiveCommand(
 registerInteractiveCommand(
   'clean',
   'Remove orphaned files and fix broken symlinks',
-  async (args) => {
+  (args) => {
     const parts = args.split(/\s+/);
     const options: Record<string, boolean> = {};
 
@@ -602,7 +602,7 @@ registerInteractiveCommand(
       }
     }
 
-    await executeCleanCommand(options);
+    executeCleanCommand(options);
   },
   {
     usage: '/clean [options]',

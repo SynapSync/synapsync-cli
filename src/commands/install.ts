@@ -12,13 +12,11 @@ import { RegistryClient, CognitiveNotFoundError, RegistryError } from '../servic
 import { ConfigManager } from '../services/config/manager.js';
 import { SyncEngine } from '../services/sync/engine.js';
 import {
-  DEFAULT_SYNAPSYNC_DIR,
   COGNITIVE_TYPES,
-  CATEGORIES,
   COGNITIVE_FILE_NAMES,
 } from '../core/constants.js';
 import type { CognitiveType, Category } from '../core/constants.js';
-import type { InstalledCognitive, CognitiveManifest, RegistryCognitiveEntry } from '../types/index.js';
+import type { InstalledCognitive, CognitiveManifest } from '../types/index.js';
 import { logger } from '../utils/logger.js';
 
 // ============================================
@@ -74,10 +72,12 @@ export async function executeInstallCommand(
         success = await installFromRegistry(parsedSource.name, options, configManager);
         break;
       case 'local':
-        success = await installFromLocal(parsedSource.path!, options, configManager);
+        if (parsedSource.path !== undefined) {
+          success = installFromLocal(parsedSource.path, options, configManager);
+        }
         break;
       case 'github':
-        success = await installFromGitHub(parsedSource, options, configManager);
+        success = installFromGitHub(parsedSource, options, configManager);
         break;
     }
 
@@ -199,7 +199,7 @@ async function installFromRegistry(
   const assets = await downloadAssets(client, name, manifest);
 
   // Save files
-  await saveCognitive(targetDir, manifest, downloaded.content, assets);
+  saveCognitive(targetDir, manifest, downloaded.content, assets);
 
   // Update manifest.json
   updateProjectManifest(configManager, manifest, 'registry');
@@ -222,7 +222,7 @@ async function installFromRegistry(
 async function downloadAssets(
   client: RegistryClient,
   name: string,
-  manifest: CognitiveManifest
+  _manifest: CognitiveManifest
 ): Promise<Map<string, string>> {
   const assets = new Map<string, string>();
 
@@ -252,11 +252,11 @@ async function downloadAssets(
 // Local Installation
 // ============================================
 
-async function installFromLocal(
+function installFromLocal(
   sourcePath: string,
   options: InstallCommandOptions,
   configManager: ConfigManager
-): Promise<boolean> {
+): boolean {
   const absolutePath = path.resolve(process.cwd(), sourcePath);
 
   if (!fs.existsSync(absolutePath)) {
@@ -325,7 +325,7 @@ async function installFromLocal(
   }
 
   // Save files
-  await saveCognitive(targetDir, manifest, content, assets);
+  saveCognitive(targetDir, manifest, content, assets);
 
   // Update manifest.json
   updateProjectManifest(configManager, manifest, 'local');
@@ -390,7 +390,7 @@ function detectCognitiveType(dirPath: string): { type: CognitiveType; fileName: 
 function parseMetadata(content: string): Record<string, unknown> {
   // Parse YAML frontmatter
   const match = content.match(/^---\n([\s\S]*?)\n---/);
-  if (match === null || match[1] === undefined) {
+  if (match?.[1] === undefined) {
     return {};
   }
 
@@ -427,11 +427,11 @@ function parseMetadata(content: string): Record<string, unknown> {
 // GitHub Installation
 // ============================================
 
-async function installFromGitHub(
-  source: InstallSource,
-  options: InstallCommandOptions,
-  configManager: ConfigManager
-): Promise<boolean> {
+function installFromGitHub(
+  _source: InstallSource,
+  _options: InstallCommandOptions,
+  _configManager: ConfigManager
+): boolean {
   // For now, we'll use raw GitHub URLs similar to registry
   // This is a simplified implementation
   logger.line();
@@ -454,12 +454,12 @@ function getTargetDir(
   return path.join(synapSyncDir, `${type}s`, category, name);
 }
 
-async function saveCognitive(
+function saveCognitive(
   targetDir: string,
   manifest: CognitiveManifest,
   content: string,
   assets: Map<string, string>
-): Promise<void> {
+): void {
   // Create directory structure
   fs.mkdirSync(targetDir, { recursive: true });
 
@@ -494,7 +494,7 @@ function updateProjectManifest(
 
   if (fs.existsSync(manifestPath)) {
     const content = fs.readFileSync(manifestPath, 'utf-8');
-    projectManifest = JSON.parse(content);
+    projectManifest = JSON.parse(content) as typeof projectManifest;
   } else {
     projectManifest = {
       version: '1.0.0',

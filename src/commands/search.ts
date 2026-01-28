@@ -117,12 +117,12 @@ function validateOptions(options: SearchCommandOptions): ValidatedOptions | null
 
   // Validate category
   if (options.category !== undefined) {
-    if (!CATEGORIES.includes(options.category as Category)) {
+    if (!CATEGORIES.includes(options.category)) {
       logger.error(`Invalid category: ${options.category}`);
       logger.hint(`Valid categories: ${CATEGORIES.join(', ')}`);
       return null;
     }
-    validated.category = options.category as Category;
+    validated.category = options.category;
   }
 
   // Validate tag
