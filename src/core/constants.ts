@@ -3,13 +3,15 @@
  */
 
 // ============================================
-// Asset Types - The types of AI resources managed
+// Cognitive Types - The types of AI cognitives managed
+// Cognitives are the building blocks of AI capabilities:
+// skills, agents, prompts, workflows, and tools
 // ============================================
-export const ASSET_TYPES = ['skill', 'agent', 'prompt', 'workflow', 'tool'] as const;
-export type AssetType = (typeof ASSET_TYPES)[number];
+export const COGNITIVE_TYPES = ['skill', 'agent', 'prompt', 'workflow', 'tool'] as const;
+export type CognitiveType = (typeof COGNITIVE_TYPES)[number];
 
-// Default file names per asset type
-export const ASSET_FILE_NAMES: Record<AssetType, string> = {
+// Default file names per cognitive type
+export const COGNITIVE_FILE_NAMES: Record<CognitiveType, string> = {
   skill: 'SKILL.md',
   agent: 'AGENT.md',
   prompt: 'PROMPT.md',
@@ -59,8 +61,8 @@ export const SUPPORTED_PROVIDERS = [
 ] as const;
 export type SupportedProvider = (typeof SUPPORTED_PROVIDERS)[number];
 
-// Provider paths for syncing assets
-export const PROVIDER_PATHS: Record<SupportedProvider, Record<AssetType, string>> = {
+// Provider paths for syncing cognitives
+export const PROVIDER_PATHS: Record<SupportedProvider, Record<CognitiveType, string>> = {
   claude: {
     skill: '.claude/skills',
     agent: '.claude/agents',
@@ -110,7 +112,7 @@ export const PROVIDER_PATHS: Record<SupportedProvider, Record<AssetType, string>
 // ============================================
 export const CLI_NAME = 'synapsync';
 export const CLI_DESCRIPTION =
-  'Neural AI Orchestration Platform - Manage AI skills, agents, prompts and tools across providers';
+  'Neural AI Orchestration Platform - Manage AI cognitives (skills, agents, prompts, tools) across providers';
 
 // ============================================
 // ANSI Escape Codes

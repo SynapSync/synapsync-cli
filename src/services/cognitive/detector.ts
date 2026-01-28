@@ -1,7 +1,7 @@
 /**
- * Asset Type Detector
+ * Cognitive Type Detector
  *
- * Detects the type of an asset using multiple strategies:
+ * Detects the type of a cognitive using multiple strategies:
  * 1. Explicit flag (--type)
  * 2. Registry lookup
  * 3. File detection (SKILL.md, AGENT.md, etc.)
@@ -10,13 +10,13 @@
 
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { ASSET_TYPES, ASSET_FILE_NAMES } from '../../core/constants.js';
-import type { AssetType } from '../../core/constants.js';
+import { COGNITIVE_TYPES, COGNITIVE_FILE_NAMES } from '../../core/constants.js';
+import type { CognitiveType } from '../../core/constants.js';
 import type {
   InstallSource,
-  AssetDetectionResult,
+  CognitiveDetectionResult,
   FileDetectionResult,
-  AssetRegistryMetadata,
+  CognitiveRegistryMetadata,
   InstallOptions,
 } from './types.js';
 
@@ -143,8 +143,8 @@ function parseGitHubUrl(url: string): InstallSource {
 /**
  * Strategy 1: Detect from explicit flag
  */
-export function detectFromFlag(options: InstallOptions): AssetType | null {
-  if (options.type && ASSET_TYPES.includes(options.type)) {
+export function detectFromFlag(options: InstallOptions): CognitiveType | null {
+  if (options.type && COGNITIVE_TYPES.includes(options.type)) {
     return options.type;
   }
   return null;
@@ -156,13 +156,13 @@ export function detectFromFlag(options: InstallOptions): AssetType | null {
  */
 export function detectFromRegistry(
   _source: InstallSource
-): Promise<AssetRegistryMetadata | null> {
+): Promise<CognitiveRegistryMetadata | null> {
   // TODO: Implement actual registry lookup
   // For now, return null (registry not implemented yet)
   //
   // Future implementation:
   // if (source.type !== 'registry') return null;
-  // const response = await registryClient.getAsset(source.value);
+  // const response = await registryClient.getCognitive(source.value);
   // return response;
 
   return Promise.resolve(null);
@@ -170,7 +170,7 @@ export function detectFromRegistry(
 
 /**
  * Strategy 3: Detect from local file system
- * Scans directory for known asset files (SKILL.md, AGENT.md, etc.)
+ * Scans directory for known cognitive files (SKILL.md, AGENT.md, etc.)
  */
 export async function detectFromLocalFiles(dirPath: string): Promise<FileDetectionResult> {
   try {
@@ -178,14 +178,14 @@ export async function detectFromLocalFiles(dirPath: string): Promise<FileDetecti
     const stats = await fs.stat(resolvedPath);
 
     if (!stats.isDirectory()) {
-      // If it's a file, check if it's a known asset file
+      // If it's a file, check if it's a known cognitive file
       const fileName = path.basename(resolvedPath);
-      const assetType = getAssetTypeFromFileName(fileName);
+      const cognitiveType = getCognitiveTypeFromFileName(fileName);
 
-      if (assetType) {
+      if (cognitiveType) {
         return {
           found: true,
-          type: assetType,
+          type: cognitiveType,
           fileName,
           filePath: resolvedPath,
         };
@@ -194,15 +194,15 @@ export async function detectFromLocalFiles(dirPath: string): Promise<FileDetecti
       return { found: false, type: null, fileName: null, filePath: null };
     }
 
-    // It's a directory, scan for asset files
+    // It's a directory, scan for cognitive files
     const files = await fs.readdir(resolvedPath);
 
-    for (const assetType of ASSET_TYPES) {
-      const expectedFile = ASSET_FILE_NAMES[assetType];
+    for (const cognitiveType of COGNITIVE_TYPES) {
+      const expectedFile = COGNITIVE_FILE_NAMES[cognitiveType];
       if (files.includes(expectedFile)) {
         return {
           found: true,
-          type: assetType,
+          type: cognitiveType,
           fileName: expectedFile,
           filePath: path.join(resolvedPath, expectedFile),
         };
@@ -217,7 +217,7 @@ export async function detectFromLocalFiles(dirPath: string): Promise<FileDetecti
 
 /**
  * Strategy 4: Detect from GitHub repository
- * Fetches file list from GitHub API and checks for asset files
+ * Fetches file list from GitHub API and checks for cognitive files
  */
 export async function detectFromGitHub(source: InstallSource): Promise<FileDetectionResult> {
   if (source.type !== 'github' || !source.owner || !source.repo) {
@@ -253,11 +253,11 @@ export async function detectFromGitHub(source: InstallSource): Promise<FileDetec
     if (!Array.isArray(contents)) {
       // It might be a single file
       const singleFile = contents as { name: string; path: string };
-      const assetType = getAssetTypeFromFileName(singleFile.name);
-      if (assetType) {
+      const cognitiveType = getCognitiveTypeFromFileName(singleFile.name);
+      if (cognitiveType) {
         return {
           found: true,
-          type: assetType,
+          type: cognitiveType,
           fileName: singleFile.name,
           filePath: singleFile.path,
         };
@@ -265,15 +265,15 @@ export async function detectFromGitHub(source: InstallSource): Promise<FileDetec
       return { found: false, type: null, fileName: null, filePath: null };
     }
 
-    // Search for asset files in directory
-    for (const assetType of ASSET_TYPES) {
-      const expectedFile = ASSET_FILE_NAMES[assetType];
+    // Search for cognitive files in directory
+    for (const cognitiveType of COGNITIVE_TYPES) {
+      const expectedFile = COGNITIVE_FILE_NAMES[cognitiveType];
       const found = contents.find((item) => item.name === expectedFile);
 
       if (found) {
         return {
           found: true,
-          type: assetType,
+          type: cognitiveType,
           fileName: expectedFile,
           filePath: found.path,
         };
@@ -287,12 +287,12 @@ export async function detectFromGitHub(source: InstallSource): Promise<FileDetec
 }
 
 /**
- * Get asset type from file name
+ * Get cognitive type from file name
  */
-function getAssetTypeFromFileName(fileName: string): AssetType | null {
-  for (const assetType of ASSET_TYPES) {
-    if (ASSET_FILE_NAMES[assetType] === fileName) {
-      return assetType;
+function getCognitiveTypeFromFileName(fileName: string): CognitiveType | null {
+  for (const cognitiveType of COGNITIVE_TYPES) {
+    if (COGNITIVE_FILE_NAMES[cognitiveType] === fileName) {
+      return cognitiveType;
     }
   }
   return null;
@@ -303,7 +303,7 @@ function getAssetTypeFromFileName(fileName: string): AssetType | null {
 // ============================================
 
 /**
- * Detect asset type using all available strategies
+ * Detect cognitive type using all available strategies
  *
  * Order of evaluation:
  * 1. Explicit flag (--type) - highest priority
@@ -311,10 +311,10 @@ function getAssetTypeFromFileName(fileName: string): AssetType | null {
  * 3. File detection (local or GitHub)
  * 4. Returns null if cannot detect (caller should prompt user)
  */
-export async function detectAssetType(
+export async function detectCognitiveType(
   sourceString: string,
   options: InstallOptions = {}
-): Promise<AssetDetectionResult> {
+): Promise<CognitiveDetectionResult> {
   const source = parseInstallSource(sourceString);
 
   // Strategy 1: Check explicit flag
@@ -378,4 +378,4 @@ export async function detectAssetType(
 // Utility Exports
 // ============================================
 
-export { ASSET_TYPES, ASSET_FILE_NAMES };
+export { COGNITIVE_TYPES, COGNITIVE_FILE_NAMES };

@@ -96,7 +96,7 @@ synapse-cli/
 │   │   └── colors.ts           # ✅ Colores por tipo/categoria
 │   │
 │   ├── services/               # Logica de negocio
-│   │   ├── asset/              # ✅ Sistema de assets
+│   │   ├── cognitive/          # ✅ Sistema de cognitives
 │   │   │   ├── types.ts        # ✅ Tipos de instalacion
 │   │   │   ├── detector.ts     # ✅ Deteccion de tipos
 │   │   │   ├── prompter.ts     # ✅ Prompts interactivos
@@ -116,7 +116,7 @@ synapse-cli/
 ├── docs/
 │   ├── technical/
 │   │   ├── project-plan.md     # Este documento
-│   │   └── asset-architecture.md # Arquitectura de assets
+│   │   └── cognitive-architecture.md # Arquitectura de cognitives
 │   └── roadmap/
 │       └── phase-1-foundation.md # Roadmap Phase 1
 │
@@ -166,7 +166,7 @@ synapse-cli/
 │   │   └── formatters.ts       # PENDING - tablas, boxes
 │   │
 │   ├── services/
-│   │   ├── asset/              # ✅ Multi-asset detection
+│   │   ├── cognitive/          # ✅ Multi-cognitive detection
 │   │   ├── provider/           # PENDING
 │   │   ├── registry/           # PENDING
 │   │   ├── sync/               # PENDING
@@ -260,15 +260,15 @@ synapse-cli/
 3. **GeminiAdapter** - Google Gemini API
 4. **HuggingFaceAdapter** - Hugging Face Inference API
 
-### 4.3 Asset Service (`src/services/asset/`) ✅ IMPLEMENTED
+### 4.3 Cognitive Service (`src/services/cognitive/`) ✅ IMPLEMENTED
 
 **Responsabilidades:**
-- Detectar tipo de asset desde multiples fuentes
+- Detectar tipo de cognitive desde multiples fuentes
 - Parsear fuentes de instalacion (registry, local, GitHub, URL)
 - Prompts interactivos para seleccion de tipo
-- Resolver assets para instalacion
+- Resolver cognitives para instalacion
 
-**Asset Detection Flow:**
+**Cognitive Detection Flow:**
 
 ```
 synapsync install <source>
@@ -297,7 +297,7 @@ synapsync install <source>
 └─────────────────────┘
 ```
 
-**Asset File Formats:**
+**Cognitive File Formats:**
 
 | Type | File | Format |
 |------|------|--------|
@@ -344,11 +344,11 @@ synapsync install <source>
 
 ## 5. Data Models
 
-> Ver [Asset Architecture](./asset-architecture.md) para detalles completos del sistema multi-asset.
+> Ver [Cognitive Architecture](./cognitive-architecture.md) para detalles completos del sistema multi-cognitive.
 
-### Asset Types
+### Cognitive Types
 
-SynapSync soporta 5 tipos de assets de IA:
+SynapSync soporta 5 tipos de cognitives de IA:
 
 | Type | File | Description |
 |------|------|-------------|
@@ -396,13 +396,13 @@ export const PROVIDER_PATHS: Record<SupportedProvider, Record<AssetType, string>
 };
 ```
 
-### Asset Interfaces (Implemented ✅)
+### Cognitive Interfaces (Implemented ✅)
 
 ```typescript
 // src/types/index.ts
-interface AssetMetadata {
+interface CognitiveMetadata {
   name: string;
-  type: AssetType;
+  type: CognitiveType;
   version: string;
   category: Category;
   description: string;
@@ -411,23 +411,23 @@ interface AssetMetadata {
   providers?: SupportedProvider[];
 }
 
-interface Asset extends AssetMetadata {
+interface Cognitive extends CognitiveMetadata {
   content: string;
   path: string;
 }
 
-// Specialized assets
-interface Skill extends Asset { type: 'skill'; }
-interface Agent extends Asset { type: 'agent'; capabilities?: string[]; }
-interface Prompt extends Asset { type: 'prompt'; variables?: string[]; }
-interface Workflow extends Asset { type: 'workflow'; steps?: WorkflowStep[]; }
-interface Tool extends Asset { type: 'tool'; schema?: Record<string, unknown>; }
+// Specialized cognitives
+interface Skill extends Cognitive { type: 'skill'; }
+interface Agent extends Cognitive { type: 'agent'; capabilities?: string[]; }
+interface Prompt extends Cognitive { type: 'prompt'; variables?: string[]; }
+interface Workflow extends Cognitive { type: 'workflow'; steps?: WorkflowStep[]; }
+interface Tool extends Cognitive { type: 'tool'; schema?: Record<string, unknown>; }
 ```
 
 ### Installation Source Types (Implemented ✅)
 
 ```typescript
-// src/services/asset/types.ts
+// src/services/cognitive/types.ts
 type InstallSourceType = 'registry' | 'local' | 'github' | 'url';
 
 interface InstallSource {
@@ -439,12 +439,12 @@ interface InstallSource {
   ref?: string;       // For GitHub branch/tag
 }
 
-interface AssetDetectionResult {
-  type: AssetType | null;
+interface CognitiveDetectionResult {
+  type: CognitiveType | null;
   method: 'flag' | 'registry' | 'file' | 'prompt' | 'unknown';
   confidence: 'high' | 'medium' | 'low';
   source: InstallSource;
-  metadata?: AssetRegistryMetadata;
+  metadata?: CognitiveRegistryMetadata;
 }
 ```
 
@@ -473,17 +473,17 @@ interface ProviderConnection {
 interface SynapSyncManifest {
   version: string;
   lastUpdated: string;
-  assets: Record<string, InstalledAsset>;
+  cognitives: Record<string, InstalledCognitive>;
   syncs: Record<SupportedProvider, {
     lastSync: string;
     method: 'symlink' | 'copy';
-    assets: string[];
+    cognitives: string[];
   }>;
 }
 
-interface InstalledAsset {
+interface InstalledCognitive {
   name: string;
-  type: AssetType;
+  type: CognitiveType;
   category: Category;
   version: string;
   installedAt: Date;
@@ -642,9 +642,9 @@ Example: feat(cli): add init command with interactive prompts
 - [x] `help`, `version`, `info` commands
 - [x] Centralized logger utility
 
-**Week 1.5: Asset Type System ✅ COMPLETED**
-- [x] Multi-asset type system (skill, agent, prompt, workflow, tool)
-- [x] Asset detection system (flag, registry, file, prompt)
+**Week 1.5: Cognitive Type System ✅ COMPLETED**
+- [x] Multi-cognitive type system (skill, agent, prompt, workflow, tool)
+- [x] Cognitive detection system (flag, registry, file, prompt)
 - [x] Installation source parser (registry, local, GitHub, URL)
 - [x] `/info` command with documentation topics
 
@@ -793,4 +793,5 @@ Example: feat(cli): add init command with interactive prompts
 |---------|------|--------|---------|
 | 1.0.0 | 2025-01-27 | Claude AI | Initial project plan |
 | 1.1.0 | 2025-01-27 | Claude AI | Updated stack based on CLI analysis (skills, openskills) |
-| 2.0.0 | 2025-01-27 | Claude AI | Updated to multi-asset architecture, current implementation status, updated data models, reference to asset-architecture.md |
+| 2.0.0 | 2025-01-27 | Claude AI | Updated to multi-asset architecture, current implementation status, updated data models |
+| 3.0.0 | 2025-01-27 | Claude AI | Renamed "asset" to "cognitive" terminology throughout, reference to cognitive-architecture.md |

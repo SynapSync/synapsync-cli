@@ -2,18 +2,19 @@
  * Core types for SynapSync CLI
  */
 
-import type { AssetType, Category, SupportedProvider } from '../core/constants.js';
+import type { CognitiveType, Category, SupportedProvider } from '../core/constants.js';
 
 // ============================================
-// Base Asset Types
+// Base Cognitive Types
 // ============================================
 
 /**
- * Base metadata shared by all asset types
+ * Base metadata shared by all cognitive types
+ * Cognitives are the building blocks of AI capabilities
  */
-export interface AssetMetadata {
+export interface CognitiveMetadata {
   name: string;
-  type: AssetType;
+  type: CognitiveType;
   version: string;
   category: Category;
   description: string;
@@ -23,19 +24,19 @@ export interface AssetMetadata {
 }
 
 /**
- * A complete asset with content and location
+ * A complete cognitive with content and location
  */
-export interface Asset extends AssetMetadata {
+export interface Cognitive extends CognitiveMetadata {
   content: string;
   path: string;
 }
 
 /**
- * Record of an installed asset
+ * Record of an installed cognitive
  */
-export interface InstalledAsset {
+export interface InstalledCognitive {
   name: string;
-  type: AssetType;
+  type: CognitiveType;
   category: Category;
   version: string;
   installedAt: Date;
@@ -44,20 +45,20 @@ export interface InstalledAsset {
 }
 
 // ============================================
-// Specialized Asset Types
+// Specialized Cognitive Types
 // ============================================
 
 /**
  * Skill - Reusable instruction sets for AI assistants
  */
-export interface Skill extends Asset {
+export interface Skill extends Cognitive {
   type: 'skill';
 }
 
 /**
  * Agent - Autonomous AI entities with specific behaviors
  */
-export interface Agent extends Asset {
+export interface Agent extends Cognitive {
   type: 'agent';
   capabilities?: string[];
   systemPrompt?: string;
@@ -66,7 +67,7 @@ export interface Agent extends Asset {
 /**
  * Prompt - Reusable prompt templates
  */
-export interface Prompt extends Asset {
+export interface Prompt extends Cognitive {
   type: 'prompt';
   variables?: string[];
   examples?: string[];
@@ -75,7 +76,7 @@ export interface Prompt extends Asset {
 /**
  * Workflow - Multi-step AI processes
  */
-export interface Workflow extends Asset {
+export interface Workflow extends Cognitive {
   type: 'workflow';
   steps?: WorkflowStep[];
 }
@@ -90,7 +91,7 @@ export interface WorkflowStep {
 /**
  * Tool - External integrations and functions
  */
-export interface Tool extends Asset {
+export interface Tool extends Cognitive {
   type: 'tool';
   schema?: Record<string, unknown>;
   endpoint?: string;
@@ -103,13 +104,13 @@ export interface Tool extends Asset {
 export interface SynapSyncManifest {
   version: string;
   lastUpdated: string;
-  assets: Record<string, InstalledAsset>;
+  cognitives: Record<string, InstalledCognitive>;
   syncs: Record<
     SupportedProvider,
     {
       lastSync: string;
       method: 'symlink' | 'copy';
-      assets: string[];
+      cognitives: string[];
     }
   >;
 }
@@ -151,7 +152,7 @@ export interface SyncConfig {
       SupportedProvider,
       {
         enabled: boolean;
-        paths?: Partial<Record<AssetType, string>>;
+        paths?: Partial<Record<CognitiveType, string>>;
       }
     >
   >;
@@ -188,9 +189,9 @@ export interface CommandContext {
 // Registry Types
 // ============================================
 
-export interface RegistryAsset {
+export interface RegistryCognitive {
   name: string;
-  type: AssetType;
+  type: CognitiveType;
   version: string;
   description: string;
   author: string;
@@ -200,7 +201,7 @@ export interface RegistryAsset {
 }
 
 export interface RegistrySearchResult {
-  assets: RegistryAsset[];
+  cognitives: RegistryCognitive[];
   total: number;
   page: number;
   perPage: number;
@@ -209,4 +210,4 @@ export interface RegistrySearchResult {
 // ============================================
 // Re-exports
 // ============================================
-export type { AssetType, Category, SupportedProvider };
+export type { CognitiveType, Category, SupportedProvider };

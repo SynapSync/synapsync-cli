@@ -1,14 +1,14 @@
 # Phase 1: Core Foundation
 
 **Duration:** Weeks 1-4
-**Focus:** CLI framework, basic commands, provider connections, asset management
+**Focus:** CLI framework, basic commands, provider connections, cognitive management
 **Status:** In Progress
 
 ---
 
 ## Overview
 
-La Phase 1 establece los cimientos del proyecto SynapSync CLI. El objetivo es tener una CLI funcional con los comandos esenciales, modo interactivo REPL, y la capacidad de gestionar assets de IA.
+La Phase 1 establece los cimientos del proyecto SynapSync CLI. El objetivo es tener una CLI funcional con los comandos esenciales, modo interactivo REPL, y la capacidad de gestionar cognitives de IA.
 
 ---
 
@@ -21,7 +21,7 @@ La Phase 1 establece los cimientos del proyecto SynapSync CLI. El objetivo es te
 - [x] Implementar comandos basicos: `help`, `version`, `info`
 - [ ] Implementar comandos de proyecto: `init`, `config`, `status`
 - [ ] Sistema de conexion a proveedores: `connect`, `disconnect`, `providers`
-- [ ] Gestion de assets: `search`, `install`, `list`, `uninstall`
+- [ ] Gestion de cognitives: `search`, `install`, `list`, `uninstall`
 
 ---
 
@@ -64,7 +64,7 @@ La Phase 1 establece los cimientos del proyecto SynapSync CLI. El objetivo es te
 
 - [x] Logger centralizado (`src/utils/logger.ts`)
 - [x] Constantes y tipos core (`src/core/constants.ts`)
-- [x] Tipos de assets definidos (`src/types/index.ts`)
+- [x] Tipos de cognitives definidos (`src/types/index.ts`)
 - [x] Sistema de colores por categoria y tipo (`src/ui/colors.ts`)
 
 **Deliverable:** Infraestructura base lista ✅
@@ -85,53 +85,53 @@ synapsync --help ✅
 synapsync
 > /help ✅
 > /version ✅
-> /info --assets ✅
+> /info --cognitives ✅
 ```
 
 ---
 
-## Week 1.5: Asset Type System ✅ COMPLETED (NEW)
+## Week 1.5: Cognitive Type System ✅ COMPLETED (NEW)
 
-> Semana adicional para establecer el sistema de tipos de assets.
+> Semana adicional para establecer el sistema de tipos de cognitives.
 
 ### Tasks
 
-#### 1.5.1 Multi-Asset Type System ✅
+#### 1.5.1 Multi-Cognitive Type System ✅
 
-- [x] Definir 5 tipos de assets: `skill`, `agent`, `prompt`, `workflow`, `tool`
+- [x] Definir 5 tipos de cognitives: `skill`, `agent`, `prompt`, `workflow`, `tool`
 - [x] Archivos por tipo: `SKILL.md`, `AGENT.md`, `PROMPT.md`, `WORKFLOW.yaml`, `TOOL.md`
-- [x] Tipos TypeScript completos para cada asset type
+- [x] Tipos TypeScript completos para cada cognitive type
 - [x] Constantes de configuracion por tipo
 
-#### 1.5.2 Asset Detection System ✅
+#### 1.5.2 Cognitive Detection System ✅
 
-- [x] Parser de fuentes de instalacion (`src/services/asset/detector.ts`)
+- [x] Parser de fuentes de instalacion (`src/services/cognitive/detector.ts`)
 - [x] Deteccion por flag explicito (`--type skill`)
 - [x] Deteccion por registry (placeholder)
 - [x] Deteccion por archivo local (escanea SKILL.md, AGENT.md, etc.)
 - [x] Deteccion por GitHub API
-- [x] Prompt interactivo como fallback (`src/services/asset/prompter.ts`)
+- [x] Prompt interactivo como fallback (`src/services/cognitive/prompter.ts`)
 
 #### 1.5.3 Installation Sources ✅
 
 - [x] Registry: `synapsync install code-reviewer`
-- [x] Local: `synapsync install ./path/to/asset`
+- [x] Local: `synapsync install ./path/to/cognitive`
 - [x] GitHub shorthand: `synapsync install github:user/repo`
-- [x] GitHub path: `synapsync install github:user/repo/assets/skill`
+- [x] GitHub path: `synapsync install github:user/repo/cognitives/skill`
 - [x] GitHub branch: `synapsync install github:user/repo#develop`
 - [x] GitHub URL: `synapsync install https://github.com/user/repo`
 
 #### 1.5.4 Info Command ✅
 
 - [x] Comando `/info` con topics de documentacion
-- [x] `/info --assets` - Tipos de assets
+- [x] `/info --cognitives` - Tipos de cognitives
 - [x] `/info --install` - Fuentes de instalacion y deteccion
 - [x] `/info --providers` - Proveedores soportados
 - [x] `/info --categories` - Categorias de organizacion
 - [x] `/info --sync` - Como funciona sync
 - [x] `/info --structure` - Estructura de proyecto
 
-**Deliverable:** Sistema de assets completamente tipado con deteccion automatica ✅
+**Deliverable:** Sistema de cognitives completamente tipado con deteccion automatica ✅
 
 ---
 
@@ -272,17 +272,17 @@ synapsync disconnect claude
 
 ---
 
-## Week 4: Asset Management (PENDING)
+## Week 4: Cognitive Management (PENDING)
 
-> **Note:** Ver [Asset Architecture](../technical/asset-architecture.md) para detalles completos.
+> **Note:** Ver [Cognitive Architecture](../technical/cognitive-architecture.md) para detalles completos.
 
 ### Tasks
 
 #### 4.1 Registry Client
 
 - [ ] Crear `RegistryClient` service
-- [ ] Implementar busqueda de assets
-- [ ] Implementar descarga de assets
+- [ ] Implementar busqueda de cognitives
+- [ ] Implementar descarga de cognitives
 - [ ] Implementar cache local
 
 > **Note:** Para MVP, el registry puede ser un repositorio de GitHub o JSON estatico.
@@ -300,10 +300,10 @@ synapsync disconnect claude
 
 #### 4.3 Install Command
 
-- [ ] Implementar `synapsync install <asset>`
-- [ ] Implementar `synapsync install <asset>@<version>`
+- [ ] Implementar `synapsync install <cognitive>`
+- [ ] Implementar `synapsync install <cognitive>@<version>`
 - [ ] Soportar todas las fuentes de instalacion (registry, local, GitHub)
-- [ ] Auto-detectar tipo de asset (skill, agent, prompt, etc.)
+- [ ] Auto-detectar tipo de cognitive (skill, agent, prompt, etc.)
 - [ ] Prompt interactivo si tipo no detectado
 - [ ] Actualizar `manifest.json`
 - [ ] Opcion `--type` para tipo explicito
@@ -315,14 +315,14 @@ synapsync disconnect claude
 #### 4.4 List Command
 
 - [ ] Implementar `synapsync list`
-- [ ] Mostrar assets instalados por tipo
+- [ ] Mostrar cognitives instalados por tipo
 - [ ] Opciones: `--type`, `--category`, `--global`
 
 **Deliverable:** Comando list funcional
 
 #### 4.5 Uninstall Command
 
-- [ ] Implementar `synapsync uninstall <asset>`
+- [ ] Implementar `synapsync uninstall <cognitive>`
 - [ ] Confirmar con usuario
 - [ ] Opcion `--force`
 - [ ] Limpiar archivos
@@ -332,7 +332,7 @@ synapsync disconnect claude
 ### Acceptance Criteria Week 4
 
 ```bash
-# Buscar assets
+# Buscar cognitives
 synapsync search code review
 synapsync search --type agent
 synapsync search --category frontend
@@ -347,7 +347,7 @@ synapsync install github:user/my-skill
 # -> O pregunta si no puede detectar
 
 # Instalar con tipo explicito
-synapsync install ./local-asset --type agent
+synapsync install ./local-cognitive --type agent
 
 # Listar instalados
 synapsync list
@@ -381,7 +381,7 @@ src/
 │   └── colors.ts             # ✅ Colores por tipo/categoria
 │
 ├── services/                 # Logica de negocio
-│   ├── asset/
+│   ├── cognitive/
 │   │   ├── types.ts          # ✅ Tipos de instalacion
 │   │   ├── detector.ts       # ✅ Deteccion de tipos
 │   │   ├── prompter.ts       # ✅ Prompts interactivos
@@ -389,14 +389,14 @@ src/
 │   └── index.ts
 │
 ├── core/                     # Utilidades core
-│   └── constants.ts          # ✅ Asset types, providers, categories
+│   └── constants.ts          # ✅ Cognitive types, providers, categories
 │
 ├── utils/                    # Utilidades generales
 │   ├── logger.ts             # ✅ Logger centralizado
 │   └── index.ts
 │
 └── types/                    # Tipos compartidos
-    └── index.ts              # ✅ Asset, Provider, Config types
+    └── index.ts              # ✅ Cognitive, Provider, Config types
 ```
 
 ### Strict TypeScript Configuration ✅
@@ -421,7 +421,7 @@ src/
 - `@typescript-eslint/explicit-function-return-type`: error
 - `@typescript-eslint/strict-boolean-expressions`: error
 
-### Asset Detection Flow
+### Cognitive Detection Flow
 
 ```
 synapsync install <source>
@@ -457,7 +457,7 @@ synapsync install <source>
 ### Unit Tests (minimum coverage: 70%)
 
 - [ ] Logger tests
-- [ ] Asset detector tests
+- [ ] Cognitive detector tests
 - [ ] Source parser tests
 - [ ] ConfigManager tests (when implemented)
 
@@ -472,10 +472,10 @@ synapsync install <source>
 - [x] Instalar CLI localmente con `npm link`
 - [x] Ejecutar `synapsync` sin argumentos
 - [x] Verificar modo REPL funciona
-- [x] Verificar `/info --assets` muestra documentacion
+- [x] Verificar `/info --cognitives` muestra documentacion
 - [x] Verificar `/info --install` muestra fuentes
 - [ ] Ejecutar `synapsync init` en directorio nuevo
-- [ ] Buscar e instalar un asset de prueba
+- [ ] Buscar e instalar un cognitive de prueba
 
 ---
 
@@ -491,7 +491,7 @@ Phase 1 se considera completa cuando:
 
 2. **Sistemas core funcionando:**
    - [x] Logger centralizado
-   - [x] Sistema de tipos de assets
+   - [x] Sistema de tipos de cognitives
    - [x] Deteccion automatica de tipos
    - [x] Modo REPL interactivo
    - [ ] ConfigManager
@@ -515,3 +515,4 @@ Phase 1 se considera completa cuando:
 |---------|------|---------|
 | 1.0.0 | 2025-01-27 | Initial phase 1 roadmap |
 | 2.0.0 | 2025-01-27 | Updated with implemented features, multi-asset system, detection flow |
+| 3.0.0 | 2025-01-27 | Renamed "asset" to "cognitive" terminology throughout |

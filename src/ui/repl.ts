@@ -10,52 +10,132 @@ import { CLI_NAME } from '../core/constants.js';
 import { logger } from '../utils/logger.js';
 import { executeInfoCommand } from '../commands/info.js';
 
+// Command definition with usage info
+interface CommandDef {
+  description: string;
+  usage?: string;
+  options?: Array<{ flag: string; description: string }>;
+  examples?: string[];
+  handler: (args: string) => void | Promise<void>;
+}
+
 // Available commands in interactive mode
-const COMMANDS: Record<
-  string,
-  { description: string; handler: (args: string) => void | Promise<void> }
-> = {};
+const COMMANDS: Record<string, CommandDef> = {};
 
 // Register a command for interactive mode
 export function registerInteractiveCommand(
   name: string,
   description: string,
-  handler: (args: string) => void | Promise<void>
+  handler: (args: string) => void | Promise<void>,
+  options?: {
+    usage?: string;
+    options?: Array<{ flag: string; description: string }>;
+    examples?: string[];
+  }
 ): void {
-  COMMANDS[name] = { description, handler };
+  COMMANDS[name] = {
+    description,
+    handler,
+    usage: options?.usage,
+    options: options?.options,
+    examples: options?.examples,
+  };
+}
+
+// Show detailed help for a specific command
+function showCommandHelp(commandName: string): void {
+  const cmd = COMMANDS[commandName];
+  if (!cmd) {
+    showError(`Unknown command: /${commandName}`);
+    return;
+  }
+
+  logger.line();
+  logger.log(pc.bold(pc.cyan(`  /${commandName}`)) + pc.dim(` - ${cmd.description}`));
+  logger.line();
+
+  if (cmd.usage) {
+    logger.log(pc.bold('  Usage:'));
+    logger.log(`    ${pc.cyan(cmd.usage)}`);
+    logger.line();
+  }
+
+  if (cmd.options && cmd.options.length > 0) {
+    logger.log(pc.bold('  Options:'));
+    for (const opt of cmd.options) {
+      logger.log(`    ${pc.yellow(opt.flag.padEnd(16))} ${pc.dim(opt.description)}`);
+    }
+    logger.line();
+  }
+
+  if (cmd.examples && cmd.examples.length > 0) {
+    logger.log(pc.bold('  Examples:'));
+    for (const example of cmd.examples) {
+      logger.log(`    ${pc.dim('$')} ${pc.cyan(example)}`);
+    }
+    logger.line();
+  }
 }
 
 // ============================================
 // Built-in Commands
 // ============================================
 
-registerInteractiveCommand('help', 'Show available commands', (_args) => {
-  logger.line();
-  logger.bold('  Available Commands:');
-  logger.line();
+registerInteractiveCommand(
+  'help',
+  'Show available commands or help for a specific command',
+  (args) => {
+    const commandName = args.trim().toLowerCase().replace(/^\//, '');
 
-  // Built-in commands
-  logger.log(`  ${pc.cyan('/help')}              ${pc.dim('Show this help message')}`);
-  logger.log(`  ${pc.cyan('/clear')}             ${pc.dim('Clear the screen')}`);
-  logger.log(`  ${pc.cyan('/exit')}              ${pc.dim('Exit interactive mode')}`);
-  logger.line();
-
-  // Registered commands
-  const commandNames = Object.keys(COMMANDS).filter(
-    (name) => !['help', 'clear', 'exit'].includes(name)
-  );
-
-  if (commandNames.length > 0) {
-    logger.bold('  CLI Commands:');
-    logger.line();
-    for (const name of commandNames.sort()) {
-      const cmd = COMMANDS[name];
-      const paddedName = `/${name}`.padEnd(18);
-      logger.log(`  ${pc.cyan(paddedName)} ${pc.dim(cmd?.description ?? '')}`);
+    // If a command name is provided, show detailed help
+    if (commandName) {
+      showCommandHelp(commandName);
+      return;
     }
+
+    // Show general help
     logger.line();
+    logger.bold('  Available Commands:');
+    logger.line();
+
+    // Built-in commands
+    logger.log(`  ${pc.cyan('/help [command]')}    ${pc.dim('Show help (or help for a command)')}`);
+    logger.log(`  ${pc.cyan('/clear')}             ${pc.dim('Clear the screen')}`);
+    logger.log(`  ${pc.cyan('/exit')}              ${pc.dim('Exit interactive mode')}`);
+    logger.line();
+
+    // Registered commands by category
+    const categories: Record<string, string[]> = {
+      'Information': ['info', 'version'],
+      'Project': ['init', 'config', 'status'],
+      'Providers': ['connect', 'disconnect', 'providers'],
+      'Cognitives': ['search', 'install', 'list', 'uninstall', 'create'],
+      'Sync': ['sync', 'push', 'pull'],
+    };
+
+    for (const [category, cmds] of Object.entries(categories)) {
+      const availableCmds = cmds.filter((name) => COMMANDS[name]);
+      if (availableCmds.length > 0) {
+        logger.bold(`  ${category}:`);
+        for (const name of availableCmds) {
+          const cmd = COMMANDS[name];
+          const hasOptions = cmd?.options !== undefined && cmd.options.length > 0;
+          const paddedName = `/${name}`.padEnd(18);
+          const optionsHint = hasOptions ? pc.yellow(' [options]') : '';
+          logger.log(`  ${pc.cyan(paddedName)} ${pc.dim(cmd?.description ?? '')}${optionsHint}`);
+        }
+        logger.line();
+      }
+    }
+
+    logger.hint('Tip: Use /help <command> for detailed help. Example: /help info');
+    logger.line();
+  },
+  {
+    usage: '/help [command]',
+    examples: ['/help', '/help info', '/help install'],
   }
-});
+);
 
 registerInteractiveCommand('clear', 'Clear the screen', (_args) => {
   logger.clear();
@@ -69,9 +149,25 @@ registerInteractiveCommand('exit', 'Exit interactive mode', (_args) => {
   process.exit(0);
 });
 
-registerInteractiveCommand('info', 'Show information about SynapSync concepts', (args) => {
-  executeInfoCommand(args);
-});
+registerInteractiveCommand(
+  'info',
+  'Show information about SynapSync concepts',
+  (args) => {
+    executeInfoCommand(args);
+  },
+  {
+    usage: '/info [--topic]',
+    options: [
+      { flag: '--cognitives', description: 'Types of AI cognitives (skills, agents, etc.)' },
+      { flag: '--install', description: 'How to install from registry, GitHub, local' },
+      { flag: '--providers', description: 'Supported AI providers' },
+      { flag: '--categories', description: 'Cognitive organization categories' },
+      { flag: '--sync', description: 'How synchronization works' },
+      { flag: '--structure', description: 'Project directory structure' },
+    ],
+    examples: ['/info', '/info --cognitives', '/info --install'],
+  }
+);
 
 // ============================================
 // Project Commands
