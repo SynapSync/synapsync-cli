@@ -1,0 +1,178 @@
+/**
+ * SynapSync Documentation Custom Styles
+ */
+
+/* Color palette */
+:root {
+  --ifm-color-primary: #6366f1;
+  --ifm-color-primary-dark: #4f46e5;
+  --ifm-color-primary-darker: #4338ca;
+  --ifm-color-primary-darkest: #3730a3;
+  --ifm-color-primary-light: #818cf8;
+  --ifm-color-primary-lighter: #a5b4fc;
+  --ifm-color-primary-lightest: #c7d2fe;
+
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(99, 102, 241, 0.1);
+
+  /* Custom colors */
+  --synapsync-gradient-start: #6366f1;
+  --synapsync-gradient-end: #a855f7;
+}
+
+/* Dark mode colors */
+[data-theme='dark'] {
+  --ifm-color-primary: #818cf8;
+  --ifm-color-primary-dark: #6366f1;
+  --ifm-color-primary-darker: #4f46e5;
+  --ifm-color-primary-darkest: #4338ca;
+  --ifm-color-primary-light: #a5b4fc;
+  --ifm-color-primary-lighter: #c7d2fe;
+  --ifm-color-primary-lightest: #e0e7ff;
+
+  --docusaurus-highlighted-code-line-bg: rgba(129, 140, 248, 0.2);
+}
+
+/* Hero section */
+.hero--primary {
+  background: linear-gradient(135deg, var(--synapsync-gradient-start), var(--synapsync-gradient-end));
+}
+
+.hero__title {
+  font-size: 3.5rem;
+  font-weight: 800;
+}
+
+.hero__subtitle {
+  font-size: 1.5rem;
+  opacity: 0.9;
+}
+
+/* Code blocks */
+.prism-code {
+  border-radius: 8px;
+}
+
+/* Sidebar */
+.menu__link {
+  font-size: 0.95rem;
+}
+
+/* Admonitions */
+.admonition {
+  border-radius: 8px;
+}
+
+/* Tables */
+table {
+  display: table;
+  width: 100%;
+}
+
+th {
+  background-color: var(--ifm-color-emphasis-200);
+}
+
+/* Feature cards on homepage */
+.features {
+  padding: 4rem 0;
+}
+
+/* Navbar */
+.navbar {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.navbar__title {
+  font-weight: 700;
+}
+
+/* Footer */
+.footer {
+  background-color: var(--ifm-color-emphasis-100);
+}
+
+[data-theme='dark'] .footer {
+  background-color: #1a1a2e;
+}
+
+/* Links */
+a {
+  transition: color 0.2s ease;
+}
+
+/* Buttons */
+.button {
+  transition: all 0.2s ease;
+}
+
+.button:hover {
+  transform: translateY(-1px);
+}
+
+/* Command blocks */
+.language-bash .token-line::before {
+  content: '$ ';
+  color: var(--ifm-color-emphasis-600);
+}
+
+/* TOC */
+.table-of-contents {
+  font-size: 0.9rem;
+}
+
+/* Search */
+.DocSearch-Button {
+  border-radius: 8px;
+}
+
+/* Mobile improvements */
+@media (max-width: 996px) {
+  .hero__title {
+    font-size: 2.5rem;
+  }
+
+  .hero__subtitle {
+    font-size: 1.2rem;
+  }
+}
+
+/* Cognitive type badges */
+.badge--skill {
+  background-color: #3b82f6;
+}
+
+.badge--agent {
+  background-color: #8b5cf6;
+}
+
+.badge--prompt {
+  background-color: #f59e0b;
+}
+
+.badge--workflow {
+  background-color: #06b6d4;
+}
+
+.badge--tool {
+  background-color: #10b981;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--ifm-color-emphasis-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ifm-color-emphasis-400);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ifm-color-emphasis-500);
+}

@@ -57,5 +57,11 @@ synapsync.config.yaml
 CLAUDE.md
 .agents/skills.manifest.json
 
+# Docusaurus (website/)
+website/node_modules/
+website/build/
+website/.docusaurus/
+website/.cache-loader/
+
 # Reference projects (local only)
 .temp/
