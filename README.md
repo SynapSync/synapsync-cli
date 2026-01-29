@@ -292,7 +292,7 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ## Links
 
-- [Documentation](https://docs.synapsync.dev)
+- [Documentation](https://synapsync.github.io/synapse-docs/)
 - [Registry](https://registry.synapsync.dev)
 - [GitHub](https://github.com/synapsync/cli)
 - [Issues](https://github.com/synapsync/cli/issues)
