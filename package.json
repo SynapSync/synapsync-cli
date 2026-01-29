@@ -1,5 +1,5 @@
 {
-  "name": "synapsync",
+  "name": "@synapsync/cli",
   "version": "0.1.0",
   "description": "Neural AI Orchestration Platform - CLI for managing AI skills across multiple providers",
   "author": "SynapSync",
