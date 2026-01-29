@@ -292,15 +292,12 @@ function showSuccessMessage(
   logger.line();
   logger.bold('  Next Steps:');
   logger.line();
-  logger.log(`  ${pc.cyan('1.')} Connect to providers:`);
-  logger.log(`     ${pc.dim('$')} synapsync connect claude`);
+  logger.log(`  ${pc.cyan('1.')} Browse available cognitives:`);
+  logger.log(`     ${pc.dim('$')} synapsync list --remote`);
   logger.line();
   logger.log(`  ${pc.cyan('2.')} Add cognitives:`);
   logger.log(`     ${pc.dim('$')} synapsync add code-reviewer`);
   logger.log(`     ${pc.dim('$')} synapsync add github:user/my-skill`);
-  logger.line();
-  logger.log(`  ${pc.cyan('3.')} Sync to providers:`);
-  logger.log(`     ${pc.dim('$')} synapsync sync`);
   logger.line();
 
   p.outro(pc.green('Happy syncing!'));
