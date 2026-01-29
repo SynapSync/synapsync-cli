@@ -31,7 +31,12 @@
     "format:check": "prettier --check \"src/**/*.ts\"",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run typecheck && npm run build && npm test",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "docs:install": "cd website && npm install",
+    "docs:start": "cd website && npm start",
+    "docs:build": "cd website && npm run build",
+    "docs:serve": "cd website && npm run serve",
+    "docs:clear": "cd website && npm run clear"
   },
   "engines": {
     "node": ">=20.0.0"
@@ -54,7 +59,7 @@
   "bugs": {
     "url": "https://github.com/synapsync/cli/issues"
   },
-  "homepage": "https://synapsync.github.io/synapse-docs/",
+  "homepage": "https://synapsync.github.io/docs/",
   "dependencies": {
     "@clack/prompts": "^0.11.0",
     "commander": "^12.1.0",
