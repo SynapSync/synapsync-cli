@@ -24,6 +24,7 @@ import { registerSyncCommand } from './commands/sync.js';
 import { registerUpdateCommand } from './commands/update.js';
 import { registerDoctorCommand } from './commands/doctor.js';
 import { registerCleanCommand } from './commands/clean.js';
+import { registerPurgeCommand } from './commands/purge.js';
 
 export function createCLI(): Command {
   const program = new Command();
@@ -59,6 +60,7 @@ export function createCLI(): Command {
   registerUpdateCommand(program);
   registerDoctorCommand(program);
   registerCleanCommand(program);
+  registerPurgeCommand(program);
 
   // TODO: Register more commands as they are implemented
   // These commands will work both via CLI (synapsync init)

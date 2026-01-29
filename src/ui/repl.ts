@@ -21,6 +21,7 @@ import { executeSyncCommand, executeSyncStatusCommand } from '../commands/sync.j
 import { executeUpdateCommand } from '../commands/update.js';
 import { executeDoctorCommand } from '../commands/doctor.js';
 import { executeCleanCommand } from '../commands/clean.js';
+import { executePurgeCommand } from '../commands/purge.js';
 
 // Command definition with usage info
 interface CommandDef {
@@ -121,7 +122,7 @@ registerInteractiveCommand(
       'Providers': ['providers'],
       'Cognitives': ['search', 'add', 'list', 'uninstall'],
       'Sync': ['sync'],
-      'Maintenance': ['update', 'doctor', 'clean'],
+      'Maintenance': ['update', 'doctor', 'clean', 'purge'],
     };
 
     for (const [category, cmds] of Object.entries(categories)) {
@@ -595,6 +596,30 @@ registerInteractiveCommand(
       { flag: '--json', description: 'Output as JSON' },
     ],
     examples: ['/clean', '/clean --dry-run', '/clean --force'],
+  }
+);
+
+registerInteractiveCommand(
+  'purge',
+  'Completely remove SynapSync from the project',
+  (args) => {
+    const parts = args.split(/\s+/);
+    const options: Record<string, boolean> = {};
+
+    for (const part of parts) {
+      if (part === '--force' || part === '-f') {
+        options['force'] = true;
+      }
+    }
+
+    executePurgeCommand(options);
+  },
+  {
+    usage: '/purge [options]',
+    options: [
+      { flag: '-f, --force', description: 'Skip confirmation and remove everything' },
+    ],
+    examples: ['/purge', '/purge --force'],
   }
 );
 
