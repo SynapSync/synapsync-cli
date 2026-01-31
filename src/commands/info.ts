@@ -278,6 +278,8 @@ function showCategoriesInfo(): void {
     { name: 'analytics', description: 'Metrics, tracking, data analysis', color: pc.cyan },
     { name: 'automation', description: 'Scripts, workflows, task automation', color: pc.green },
     { name: 'general', description: 'General purpose, code review, docs', color: pc.white },
+    { name: 'integrations', description: 'External services (Supabase, Stripe, etc.)', color: pc.blue },
+    { name: 'planning', description: 'Project planning, SDLC, requirements, architecture', color: pc.magenta },
   ];
 
   // Header

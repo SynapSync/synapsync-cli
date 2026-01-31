@@ -66,6 +66,8 @@ export const CATEGORIES = [
   'analytics',
   'automation',
   'general',
+  'integrations',
+  'planning',
 ] as const;
 
 export type Category = (typeof CATEGORIES)[number] | string;
