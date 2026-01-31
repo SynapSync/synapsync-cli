@@ -10,6 +10,7 @@ import * as p from '@clack/prompts';
 import pc from 'picocolors';
 import type { Command } from 'commander';
 import { ConfigManager } from '../services/config/manager.js';
+import { AgentsMdGenerator } from '../services/agents-md/generator.js';
 import {
   COGNITIVE_TYPES,
   SUPPORTED_PROVIDERS,
@@ -164,7 +165,10 @@ function initializeProject(setup: ProjectSetup): InitResult {
     // 3. Create empty manifest
     createManifest(storagePath);
 
-    // 4. Update .gitignore if exists
+    // 4. Create initial AGENTS.md
+    new AgentsMdGenerator(projectRoot, storagePath).generateEmpty();
+
+    // 5. Update .gitignore if exists
     updateGitignore(projectRoot);
 
     s.stop('Project structure created!');
@@ -292,15 +296,12 @@ function showSuccessMessage(
   logger.line();
   logger.bold('  Next Steps:');
   logger.line();
-  logger.log(`  ${pc.cyan('1.')} Connect to providers:`);
-  logger.log(`     ${pc.dim('$')} synapsync connect claude`);
+  logger.log(`  ${pc.cyan('1.')} Browse available cognitives:`);
+  logger.log(`     ${pc.dim('$')} synapsync list --remote`);
   logger.line();
   logger.log(`  ${pc.cyan('2.')} Add cognitives:`);
   logger.log(`     ${pc.dim('$')} synapsync add code-reviewer`);
   logger.log(`     ${pc.dim('$')} synapsync add github:user/my-skill`);
-  logger.line();
-  logger.log(`  ${pc.cyan('3.')} Sync to providers:`);
-  logger.log(`     ${pc.dim('$')} synapsync sync`);
   logger.line();
 
   p.outro(pc.green('Happy syncing!'));
